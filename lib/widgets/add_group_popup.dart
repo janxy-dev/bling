@@ -1,7 +1,7 @@
 import 'package:bling/widgets/join_group_popup.dart';
 import 'package:flutter/material.dart';
 
-dynamic createAddGroupPopup(BuildContext context){
+dynamic showAddGroupPopup(BuildContext context){
   showDialog(context: context, builder: (_){
     return AlertDialog(
       content: Column(
@@ -9,7 +9,7 @@ dynamic createAddGroupPopup(BuildContext context){
         children: [
           TextButton(
               onPressed: (){
-                createJoinGroupPopup(context);
+                showJoinGroupPopup(context);
               },
                 child: Text("Join",
                 style: TextStyle(fontSize: 15.0),),

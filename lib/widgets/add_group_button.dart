@@ -33,7 +33,7 @@ class _AddGroupButtonState extends State<AddGroupButton> {
           visible: _isVisible,
           child: FloatingActionButton(
             onPressed: () {
-              createAddGroupPopup(context);
+              showAddGroupPopup(context);
             },
             child: Icon(Icons.add),
           ),
