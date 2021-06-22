@@ -1,4 +1,4 @@
-import 'package:bling/widgets/appbar.dart';
+import 'package:bling/widgets/app_bars.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatelessWidget {

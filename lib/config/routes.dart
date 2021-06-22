@@ -1,6 +1,6 @@
 import 'package:bling/pages/calls.dart';
 import 'package:bling/pages/profile.dart';
-import 'package:bling/widgets/appbar.dart';
+import 'package:bling/widgets/app_bars.dart';
 import 'package:flutter/material.dart';
 import '../pages/chats.dart';
 import '../pages/settings.dart';
@@ -14,10 +14,10 @@ class RouteGenerator{
       case '/':
         return MaterialPageRoute(builder: (_) =>
           Scaffold(
-            appBar: PrimaryAppBar(pageCtrl),
+            appBar: PrimaryAppBar(),
             body: Column(
               children: [
-                SecondaryAppBar(pageCtrl),
+                SecondaryAppBar(),
                 Expanded(
                   child: PageView(
                     scrollDirection: Axis.horizontal,

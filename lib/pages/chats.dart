@@ -1,6 +1,6 @@
 import 'package:bling/config/routes.dart';
 import 'package:flutter/material.dart';
-import '../widgets/appbar.dart';
+import '../widgets/app_bars.dart';
 
 class ChatsPage extends StatelessWidget {
   @override

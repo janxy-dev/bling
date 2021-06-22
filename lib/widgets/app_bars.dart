@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:bling/config/routes.dart';
 import 'package:flutter/material.dart';
 
 Widget SearchBtn(){
@@ -22,11 +22,24 @@ Widget SettingsBtn(BuildContext context){
   );
 }
 
+Widget NavbarBtn(BuildContext context, String name, int page){
+  return GestureDetector(
+    onTap: (){
+      RouteGenerator.pageCtrl.animateToPage(page, duration: Duration(milliseconds: 200), curve: Curves.ease);
+    },
+    child: Padding(
+      padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
+      child: Text(
+          name, style: TextStyle(color: Colors.grey, fontSize: 15.0, decoration: TextDecoration.none)
+      ),
+    ),
+  );
+}
+
 class PrimaryAppBar extends StatefulWidget implements PreferredSizeWidget {
-  PageController pageCtrl;
   int page = 0;
-  PrimaryAppBar(this.pageCtrl){
-    page = pageCtrl.initialPage;
+  PrimaryAppBar(){
+    page = RouteGenerator.pageCtrl.initialPage;
   }
   @override
   _PrimaryAppBarState createState() => _PrimaryAppBarState();
@@ -36,15 +49,20 @@ class PrimaryAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _PrimaryAppBarState extends State<PrimaryAppBar> {
+  bool listenerAdded = false;
   @override
   Widget build(BuildContext context) {
-    widget.pageCtrl.addListener(() {
-      setState(() {
-        if(widget.pageCtrl.page! > 1.5) widget.page = 2;
-        else if (widget.pageCtrl.page! < 0.5) widget.page = 0;
-        else widget.page = 1;
+    if(!listenerAdded){
+      RouteGenerator.pageCtrl.addListener(() {
+        int page = 0;
+        if(RouteGenerator.pageCtrl.page! > 1.5) page = 2;
+        else if (RouteGenerator.pageCtrl.page! < 0.5) page = 0;
+        else page = 1;
+        if(widget.page == page) return;
+        setState(() => widget.page = page);
       });
-    });
+      listenerAdded = true;
+    }
     return AppBar(
         title: Text("Bling"),
         elevation: 0,
@@ -56,37 +74,27 @@ class _PrimaryAppBarState extends State<PrimaryAppBar> {
   }
 }
 
-Widget NavbarBtn(BuildContext context, String name){
-  return GestureDetector(
-    child: Padding(
-      padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
-      child: Text(
-          name, style: TextStyle(color: Colors.grey, fontSize: 15.0, decoration: TextDecoration.none)
-      ),
-    ),
-  );
-}
-
 class  SecondaryAppBar extends StatefulWidget {
-
-  PageController pageCtrl;
   double margin = 0.0;
-  SecondaryAppBar(this.pageCtrl);
-
   @override
   _SecondaryAppBarState createState() => _SecondaryAppBarState();
 }
 
 class _SecondaryAppBarState extends State<SecondaryAppBar> {
 
+  bool listenerAdded = false;
+
   @override
   Widget build(BuildContext context) {
-    widget.pageCtrl.addListener(() {
-      setState(() {
-        var multiplier = 1.0-widget.pageCtrl.page!.toDouble();
-        widget.margin = -128*multiplier;
+    if(!listenerAdded){
+      RouteGenerator.pageCtrl.addListener(() {
+        setState(() {
+          var multiplier = 1.0-RouteGenerator.pageCtrl.page!.toDouble();
+          widget.margin = -128*multiplier;
+        },);
       });
-    });
+      listenerAdded = true;
+    }
     return Container(
         width: MediaQuery.of(context).size.width,
         color: Colors.grey[50],
@@ -95,9 +103,9 @@ class _SecondaryAppBarState extends State<SecondaryAppBar> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                NavbarBtn(context, "FRIENDS"),
-                NavbarBtn(context, "CHATS"),
-                NavbarBtn(context, "PROFILE"),
+                NavbarBtn(context, "FRIENDS", 0),
+                NavbarBtn(context, "CHATS", 1),
+                NavbarBtn(context, "PROFILE", 2),
               ],
             ),
               Container(
