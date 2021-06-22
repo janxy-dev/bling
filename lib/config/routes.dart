@@ -5,9 +5,32 @@ import 'package:flutter/material.dart';
 import '../pages/chats.dart';
 import '../pages/settings.dart';
 
-class RouteGenerator{
+class Routes{
 
   static final PageController pageCtrl = PageController(initialPage: 1);
+  static int page = 1;
+  static final List<Function()> pageListeners = [];
+  static bool pageCtrlListener = false;
+
+  //Custom event for switching pages on half
+  static void addPageListener(void func()){
+    //Invoke event inside PageControl event
+    if(!pageCtrlListener){
+      pageCtrl.addListener(() {
+        int page = 0;
+        if(pageCtrl.page! > 1.5) page = 2;
+        else if (pageCtrl.page! < 0.5) page = 0;
+        else page = 1;
+        if(Routes.page != page){
+          Routes.page = page;
+          for(int i = 0; i<pageListeners.length; i++){
+            pageListeners[i]();
+          }
+        }
+      });
+    }
+    pageListeners.add(func);
+  }
   static Route<dynamic> generateRoute(RouteSettings settings){
     final args = settings.arguments;
     switch(settings.name){
@@ -31,6 +54,7 @@ class RouteGenerator{
                 )
               ],
             ),
+            floatingActionButton: FloatingActionButton(onPressed: () {  },),
           )
 
         );

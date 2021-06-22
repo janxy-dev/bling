@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 Widget SearchBtn(){
   return GestureDetector(
+    behavior: HitTestBehavior.opaque,
     child: Padding(
       padding: EdgeInsets.only(right: 20.0),
       child: Icon(Icons.search),
@@ -12,6 +13,7 @@ Widget SearchBtn(){
 
 Widget SettingsBtn(BuildContext context){
   return GestureDetector(
+    behavior: HitTestBehavior.opaque,
     onTap: () {
       Navigator.of(context).pushNamed("/settings");
     },
@@ -24,8 +26,9 @@ Widget SettingsBtn(BuildContext context){
 
 Widget NavbarBtn(BuildContext context, String name, int page){
   return GestureDetector(
+    behavior: HitTestBehavior.opaque,
     onTap: (){
-      RouteGenerator.pageCtrl.animateToPage(page, duration: Duration(milliseconds: 200), curve: Curves.ease);
+      Routes.pageCtrl.animateToPage(page, duration: Duration(milliseconds: 200), curve: Curves.ease);
     },
     child: Padding(
       padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
@@ -37,10 +40,7 @@ Widget NavbarBtn(BuildContext context, String name, int page){
 }
 
 class PrimaryAppBar extends StatefulWidget implements PreferredSizeWidget {
-  int page = 0;
-  PrimaryAppBar(){
-    page = RouteGenerator.pageCtrl.initialPage;
-  }
+  int page = 1;
   @override
   _PrimaryAppBarState createState() => _PrimaryAppBarState();
 
@@ -52,14 +52,11 @@ class _PrimaryAppBarState extends State<PrimaryAppBar> {
   bool listenerAdded = false;
   @override
   Widget build(BuildContext context) {
+
     if(!listenerAdded){
-      RouteGenerator.pageCtrl.addListener(() {
-        int page = 0;
-        if(RouteGenerator.pageCtrl.page! > 1.5) page = 2;
-        else if (RouteGenerator.pageCtrl.page! < 0.5) page = 0;
-        else page = 1;
-        if(widget.page == page) return;
-        setState(() => widget.page = page);
+      Routes.addPageListener(() {
+        //update widget on page switch
+        setState(() {});
       });
       listenerAdded = true;
     }
@@ -67,7 +64,7 @@ class _PrimaryAppBarState extends State<PrimaryAppBar> {
         title: Text("Bling"),
         elevation: 0,
         automaticallyImplyLeading: false,
-        actions: [ widget.page != 0 ? SearchBtn() : Container(width: 0, height: 0),
+        actions: [ Routes.page != 2 ? SearchBtn() : Container(width: 0, height: 0),
           SettingsBtn(context)
         ]
     );
@@ -87,10 +84,10 @@ class _SecondaryAppBarState extends State<SecondaryAppBar> {
   @override
   Widget build(BuildContext context) {
     if(!listenerAdded){
-      RouteGenerator.pageCtrl.addListener(() {
+      Routes.pageCtrl.addListener(() {
         setState(() {
-          var multiplier = 1.0-RouteGenerator.pageCtrl.page!.toDouble();
-          widget.margin = -128*multiplier;
+          var multiplier = Routes.pageCtrl.page!.toDouble()-1.0;
+          widget.margin = (MediaQuery.of(context).size.width/3-2.0)*multiplier;
         },);
       });
       listenerAdded = true;
