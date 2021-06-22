@@ -13,22 +13,24 @@ class RouteGenerator{
     switch(settings.name){
       case '/':
         return MaterialPageRoute(builder: (_) =>
-          Column(
-            children: [
-              PrimaryAppBar(pageCtrl),
-              SecondaryAppBar(),
-              Expanded(
-                child: PageView(
-                  scrollDirection: Axis.horizontal,
-                  controller: pageCtrl,
-                  children: [
-                    CallsPage(),
-                    ChatsPage(),
-                    ProfilePage()
-                  ],
-                ),
-              )
-            ],
+          Scaffold(
+            appBar: PrimaryAppBar(pageCtrl),
+            body: Column(
+              children: [
+                SecondaryAppBar(pageCtrl),
+                Expanded(
+                  child: PageView(
+                    scrollDirection: Axis.horizontal,
+                    controller: pageCtrl,
+                    children: [
+                      CallsPage(),
+                      ChatsPage(),
+                      ProfilePage()
+                    ],
+                  ),
+                )
+              ],
+            ),
           )
 
         );
