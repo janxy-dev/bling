@@ -1,13 +1,14 @@
 import 'package:bling/config/routes.dart';
+import 'package:bling/widgets/add_group_popup.dart';
 import 'package:flutter/material.dart';
 
-class JoinButton extends StatefulWidget {
+class AddGroupButton extends StatefulWidget {
 
   @override
-  _JoinButtonState createState() => _JoinButtonState();
+  _AddGroupButtonState createState() => _AddGroupButtonState();
 }
 
-class _JoinButtonState extends State<JoinButton> {
+class _AddGroupButtonState extends State<AddGroupButton> {
   double _opacity = 1.0;
   bool _isVisible = true;
   @override
@@ -31,10 +32,13 @@ class _JoinButtonState extends State<JoinButton> {
         child: Visibility(
           visible: _isVisible,
           child: FloatingActionButton(
-            onPressed: () { },
+            onPressed: () {
+              createAddGroupPopup(context);
+            },
             child: Icon(Icons.add),
           ),
         ),
       );
   }
+
 }

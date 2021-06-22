@@ -1,7 +1,7 @@
 import 'package:bling/pages/calls.dart';
 import 'package:bling/pages/profile.dart';
 import 'package:bling/widgets/app_bars.dart';
-import 'package:bling/widgets/join_button.dart';
+import 'package:bling/widgets/add_group_button.dart';
 import 'package:flutter/material.dart';
 import '../pages/chats.dart';
 import '../pages/settings.dart';
@@ -55,7 +55,7 @@ class Routes{
                 )
               ],
             ),
-            floatingActionButton: JoinButton(),
+            floatingActionButton: AddGroupButton(),
           )
 
         );
