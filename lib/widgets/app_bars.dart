@@ -49,16 +49,16 @@ class PrimaryAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _PrimaryAppBarState extends State<PrimaryAppBar> {
-  bool listenerAdded = false;
+  bool _listenerAdded = false;
   @override
   Widget build(BuildContext context) {
 
-    if(!listenerAdded){
+    if(!_listenerAdded){
       Routes.addPageListener(() {
         //update widget on page switch
         setState(() {});
       });
-      listenerAdded = true;
+      _listenerAdded = true;
     }
     return AppBar(
         title: Text("Bling"),
@@ -72,25 +72,25 @@ class _PrimaryAppBarState extends State<PrimaryAppBar> {
 }
 
 class  SecondaryAppBar extends StatefulWidget {
-  double margin = 0.0;
   @override
   _SecondaryAppBarState createState() => _SecondaryAppBarState();
 }
 
 class _SecondaryAppBarState extends State<SecondaryAppBar> {
 
-  bool listenerAdded = false;
+  bool _listenerAdded = false;
+  double _margin = 0.0;
 
   @override
   Widget build(BuildContext context) {
-    if(!listenerAdded){
+    if(!_listenerAdded){
       Routes.pageCtrl.addListener(() {
         setState(() {
           var multiplier = Routes.pageCtrl.page!.toDouble()-1.0;
-          widget.margin = (MediaQuery.of(context).size.width/3-2.0)*multiplier;
+          _margin = (MediaQuery.of(context).size.width/3-2.0)*multiplier;
         },);
       });
-      listenerAdded = true;
+      _listenerAdded = true;
     }
     return Container(
         width: MediaQuery.of(context).size.width,
@@ -106,7 +106,7 @@ class _SecondaryAppBarState extends State<SecondaryAppBar> {
               ],
             ),
               Container(
-                transform: Matrix4.translationValues(widget.margin, 0.0, 0.0),
+                transform: Matrix4.translationValues(_margin, 0.0, 0.0),
                 width: 60.0,
                 height: 5.0,
                 color: Colors.grey[300],
