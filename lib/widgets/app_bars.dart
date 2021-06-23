@@ -120,6 +120,7 @@ class SettingsAppBar extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
+      pinned: true,
       title: Text(title),
       centerTitle: true,
       elevation: 0,
