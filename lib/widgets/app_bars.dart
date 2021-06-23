@@ -1,7 +1,7 @@
 import 'package:bling/config/routes.dart';
 import 'package:flutter/material.dart';
 
-Widget SearchBtn(){
+Widget searchBtn(){
   return GestureDetector(
     behavior: HitTestBehavior.opaque,
     child: Padding(
@@ -11,7 +11,7 @@ Widget SearchBtn(){
   );
 }
 
-Widget SettingsBtn(BuildContext context){
+Widget settingsBtn(BuildContext context){
   return GestureDetector(
     behavior: HitTestBehavior.opaque,
     onTap: () {
@@ -24,7 +24,7 @@ Widget SettingsBtn(BuildContext context){
   );
 }
 
-Widget NavbarBtn(BuildContext context, String name, int page){
+Widget navbarBtn(BuildContext context, String name, int page){
   return GestureDetector(
     behavior: HitTestBehavior.opaque,
     onTap: (){
@@ -62,8 +62,8 @@ class _PrimaryAppBarState extends State<PrimaryAppBar> {
         title: Text("Bling"),
         elevation: 0,
         automaticallyImplyLeading: false,
-        actions: [ Routes.page != 2 ? SearchBtn() : Container(width: 0, height: 0),
-          SettingsBtn(context)
+        actions: [ Routes.page != 2 ? searchBtn() : Container(width: 0, height: 0),
+          settingsBtn(context)
         ]
     );
   }
@@ -99,9 +99,9 @@ class _SecondaryAppBarState extends State<SecondaryAppBar> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                NavbarBtn(context, "FRIENDS", 0),
-                NavbarBtn(context, "CHATS", 1),
-                NavbarBtn(context, "PROFILE", 2),
+                navbarBtn(context, "FRIENDS", 0),
+                navbarBtn(context, "CHATS", 1),
+                navbarBtn(context, "PROFILE", 2),
               ],
             ),
               Container(

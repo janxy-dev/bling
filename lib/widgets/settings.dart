@@ -4,9 +4,9 @@ class Setting extends StatelessWidget {
   final List<Widget>? leading;
   final List<Widget>? action;
   final String? title;
-  late String _title;
-  late List<Widget> _leading;
-  late List<Widget> _action;
+  late final String _title;
+  late final List<Widget> _leading;
+  late final List<Widget> _action;
   Setting({this.leading, this.action, this.title}){
     _leading = leading ?? [];
     _action = action ?? [];

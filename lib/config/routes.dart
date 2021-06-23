@@ -10,11 +10,13 @@ class Routes{
   static final PageController pageCtrl = PageController(initialPage: 1);
   static int page = 1;
 
-  static ChangeNotifier _pageChangeNotifier = ChangeNotifier();
-
+  static ValueNotifier _pageNotifier = ValueNotifier(page);
+  static bool _isListenerAdded = false;
   //Custom event for switching pages on half
   static void addPageListener(void func()){
+    _pageNotifier.addListener(func);
     //Invoke event inside PageControl event
+    if(_isListenerAdded) return;
     pageCtrl.addListener(() {
       int page = 0;
       if(pageCtrl.page! > 1.5) page = 2;
@@ -22,13 +24,12 @@ class Routes{
       else page = 1;
       if(Routes.page != page){
         Routes.page = page;
-        _pageChangeNotifier.notifyListeners();
+        _pageNotifier.value = page;
       }
     });
-    _pageChangeNotifier.addListener(func);
+    _isListenerAdded = true;
   }
   static Route<dynamic> generateRoute(RouteSettings settings){
-    final args = settings.arguments;
     switch(settings.name){
       case '/':
         return MaterialPageRoute(builder: (_) =>
@@ -63,18 +64,10 @@ class Routes{
       case '/settings':
         return MaterialPageRoute(builder: (_) => SettingsPage());
       default:
-        return errorRoute;
+        return _errorRoute;
     }
   }
-
-  static Route<dynamic> getSwipableRoute(Widget page){
-    return PageRouteBuilder(
-      pageBuilder: (_, __, ___) => page,
-      transitionDuration: Duration(seconds: 0),
-    );
-  }
-
-  static Route<dynamic> errorRoute =
+  static Route<dynamic> _errorRoute =
     MaterialPageRoute(builder: (_) => Scaffold(
       body: Text("ERROR"),
     ));
