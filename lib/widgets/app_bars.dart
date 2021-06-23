@@ -39,13 +39,9 @@ Widget NavbarBtn(BuildContext context, String name, int page){
   );
 }
 
-class PrimaryAppBar extends StatefulWidget implements PreferredSizeWidget {
-  int page = 1;
+class PrimaryAppBar extends StatefulWidget {
   @override
   _PrimaryAppBarState createState() => _PrimaryAppBarState();
-
-  @override
-  Size get preferredSize => Size.fromHeight(56.0);
 }
 
 class _PrimaryAppBarState extends State<PrimaryAppBar> {
@@ -60,7 +56,8 @@ class _PrimaryAppBarState extends State<PrimaryAppBar> {
       });
       _listenerAdded = true;
     }
-    return AppBar(
+    return SliverAppBar(
+        pinned: true,
         title: Text("Bling"),
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -117,11 +114,20 @@ class _SecondaryAppBarState extends State<SecondaryAppBar> {
   }
 }
 
-AppBar SettingsAppBar(title){
-  return AppBar(
+class SettingsAppBar extends StatelessWidget{
+  final String title;
+  SettingsAppBar(this.title);
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
       title: Text(title),
       centerTitle: true,
       elevation: 0,
-      automaticallyImplyLeading: true
-  );
+      automaticallyImplyLeading: false,
+      leading: new IconButton(
+        icon: new Icon(Icons.close),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+    );
+  }
 }

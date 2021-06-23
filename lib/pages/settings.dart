@@ -5,7 +5,11 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SettingsAppBar("Settings")
+        body: CustomScrollView(
+          slivers: [
+            SettingsAppBar("Settings")
+          ],
+        ),
     );
   }
 }

@@ -16,6 +16,7 @@ dynamic showJoinGroupPopup(BuildContext context){
             autocorrect: false,
             onSubmitted: (code){
               Navigator.pop(context);
+              Navigator.pop(context);
             },
           ),
         ],

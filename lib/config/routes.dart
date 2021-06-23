@@ -38,26 +38,32 @@ class Routes{
       case '/':
         return MaterialPageRoute(builder: (_) =>
           Scaffold(
-            appBar: PrimaryAppBar(),
-            body: Column(
-              children: [
-                SecondaryAppBar(),
-                Expanded(
-                  child: PageView(
-                    scrollDirection: Axis.horizontal,
-                    controller: pageCtrl,
-                    children: [
-                      CallsPage(),
-                      ChatsPage(),
-                      ProfilePage()
-                    ],
-                  ),
-                )
-              ],
+            body: NestedScrollView(
+              headerSliverBuilder: (BuildContext context,
+                  bool innerBoxIsScrolled) {
+                return [
+                  PrimaryAppBar(),
+                ];
+              },
+              body: Column(
+                  children: [
+                  SecondaryAppBar(),
+                  Expanded(
+                    child: PageView(
+                      scrollDirection: Axis.horizontal,
+                      controller: pageCtrl,
+                      children: [
+                        CallsPage(),
+                        ChatsPage(),
+                        ProfilePage()
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
             floatingActionButton: AddGroupButton(),
           )
-
         );
       case '/settings':
         return MaterialPageRoute(builder: (_) => SettingsPage());
