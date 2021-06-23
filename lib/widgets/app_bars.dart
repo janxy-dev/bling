@@ -45,17 +45,18 @@ class PrimaryAppBar extends StatefulWidget {
 }
 
 class _PrimaryAppBarState extends State<PrimaryAppBar> {
-  bool _listenerAdded = false;
+
+  @override
+  void initState(){
+    super.initState();
+    Routes.addPageListener(() {
+      //update widget on page switch
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    if(!_listenerAdded){
-      Routes.addPageListener(() {
-        //update widget on page switch
-        setState(() {});
-      });
-      _listenerAdded = true;
-    }
     return SliverAppBar(
         pinned: true,
         title: Text("Bling"),
@@ -75,20 +76,21 @@ class  SecondaryAppBar extends StatefulWidget {
 
 class _SecondaryAppBarState extends State<SecondaryAppBar> {
 
-  bool _listenerAdded = false;
   double _margin = 0.0;
 
   @override
+  void initState(){
+    super.initState();
+    Routes.pageCtrl.addListener(() {
+      setState(() {
+        var multiplier = Routes.pageCtrl.page!.toDouble()-1.0;
+        _margin = (MediaQuery.of(context).size.width/3-2.0)*multiplier;
+      },);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if(!_listenerAdded){
-      Routes.pageCtrl.addListener(() {
-        setState(() {
-          var multiplier = Routes.pageCtrl.page!.toDouble()-1.0;
-          _margin = (MediaQuery.of(context).size.width/3-2.0)*multiplier;
-        },);
-      });
-      _listenerAdded = true;
-    }
     return Container(
         width: MediaQuery.of(context).size.width,
         color: Colors.grey[50],

@@ -7,30 +7,25 @@ import '../pages/chats.dart';
 import '../pages/settings.dart';
 
 class Routes{
-
   static final PageController pageCtrl = PageController(initialPage: 1);
   static int page = 1;
-  static final List<Function()> pageListeners = [];
-  static bool pageCtrlListener = false;
+
+  static ChangeNotifier _pageChangeNotifier = ChangeNotifier();
 
   //Custom event for switching pages on half
   static void addPageListener(void func()){
     //Invoke event inside PageControl event
-    if(!pageCtrlListener){
-      pageCtrl.addListener(() {
-        int page = 0;
-        if(pageCtrl.page! > 1.5) page = 2;
-        else if (pageCtrl.page! < 0.5) page = 0;
-        else page = 1;
-        if(Routes.page != page){
-          Routes.page = page;
-          for(int i = 0; i<pageListeners.length; i++){
-            pageListeners[i]();
-          }
-        }
-      });
-    }
-    pageListeners.add(func);
+    pageCtrl.addListener(() {
+      int page = 0;
+      if(pageCtrl.page! > 1.5) page = 2;
+      else if (pageCtrl.page! < 0.5) page = 0;
+      else page = 1;
+      if(Routes.page != page){
+        Routes.page = page;
+        _pageChangeNotifier.notifyListeners();
+      }
+    });
+    _pageChangeNotifier.addListener(func);
   }
   static Route<dynamic> generateRoute(RouteSettings settings){
     final args = settings.arguments;

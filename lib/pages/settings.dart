@@ -1,3 +1,4 @@
+import 'package:bling/config/themes.dart';
 import 'package:bling/widgets/app_bars.dart';
 import 'package:bling/widgets/settings.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class SettingsPage extends StatelessWidget {
           body: Column(
             children: [
               ToggleSetting(title: "Dark Theme", onToggled: (bool value){
-                print(value);
+                Themes.themes.toggleTheme();
               }),
               ],
             )
