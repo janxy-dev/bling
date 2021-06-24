@@ -58,7 +58,7 @@ class _PrimaryAppBarState extends State<PrimaryAppBar> {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
-        pinned: true,
+        primary: false,
         title: Text("Bling"),
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -70,6 +70,7 @@ class _PrimaryAppBarState extends State<PrimaryAppBar> {
 }
 
 class  SecondaryAppBar extends StatefulWidget {
+  SecondaryAppBar();
   @override
   _SecondaryAppBarState createState() => _SecondaryAppBarState();
 }
@@ -82,36 +83,34 @@ class _SecondaryAppBarState extends State<SecondaryAppBar> {
   void initState(){
     super.initState();
     Routes.pageCtrl.addListener(() {
-      setState(() {
-        var multiplier = Routes.pageCtrl.page!.toDouble()-1.0;
-        _margin = (MediaQuery.of(context).size.width/3-2.0)*multiplier;
-      },);
+      if(this.mounted){
+        setState(() {
+          var multiplier = Routes.pageCtrl.page!.toDouble()-1.0;
+          _margin = (MediaQuery.of(context).size.width/3-2.0)*multiplier;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        color: Colors.grey[50],
-        child: Column(
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                navbarBtn(context, "FRIENDS", 0),
-                navbarBtn(context, "CHATS", 1),
-                navbarBtn(context, "PROFILE", 2),
-              ],
-            ),
-              Container(
-                transform: Matrix4.translationValues(_margin, 0.0, 0.0),
-                width: 60.0,
-                height: 5.0,
-                color: Colors.grey[300],
-              ),
-          ]
-        )
+            navbarBtn(context, "FRIENDS", 0),
+            navbarBtn(context, "CHATS", 1),
+            navbarBtn(context, "PROFILE", 2),
+          ],
+        ),
+          Container(
+            transform: Matrix4.translationValues(_margin, 0.0, 0.0),
+            width: 60.0,
+            height: 5.0,
+            color: Colors.grey[300],
+          ),
+      ]
     );
   }
 }

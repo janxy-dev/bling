@@ -1,9 +1,9 @@
 import 'package:bling/pages/calls.dart';
+import 'package:bling/pages/chats.dart';
 import 'package:bling/pages/profile.dart';
 import 'package:bling/widgets/app_bars.dart';
 import 'package:bling/widgets/add_group_button.dart';
 import 'package:flutter/material.dart';
-import '../pages/chats.dart';
 import '../pages/settings.dart';
 
 class Routes{
@@ -32,34 +32,50 @@ class Routes{
   static Route<dynamic> generateRoute(RouteSettings settings){
     switch(settings.name){
       case '/':
-        return MaterialPageRoute(builder: (_) =>
-          Scaffold(
-            body: NestedScrollView(
-              headerSliverBuilder: (BuildContext context,
-                  bool innerBoxIsScrolled) {
-                return [
-                  PrimaryAppBar(),
-                ];
-              },
-              body: Column(
-                  children: [
-                  SecondaryAppBar(),
-                  Expanded(
-                    child: PageView(
-                      scrollDirection: Axis.horizontal,
-                      controller: pageCtrl,
-                      children: [
-                        CallsPage(),
-                        ChatsPage(),
-                        ProfilePage()
-                      ],
-                    ),
-                  )
-                ],
-              ),
+        return MaterialPageRoute(builder: (context) {
+          return Scaffold(
+            body:
+            Column(
+              children: [
+                //Status bar
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).padding.top,
+                  color: Theme.of(context).primaryColor,
+                ),
+
+                Expanded(
+                  child: NestedScrollView(
+                      headerSliverBuilder: (BuildContext context,
+                          bool innerBoxIsScrolled) {
+                        return [
+                          PrimaryAppBar(),
+                        ];
+                      },
+                      body: Column(
+                        children: [
+                          SecondaryAppBar(),
+                          Expanded(
+                            child: PageView(
+                              scrollDirection: Axis.horizontal,
+                              controller: pageCtrl,
+                              children: [
+                                CallsPage(),
+                                ChatsPage(),
+                                ProfilePage()
+                              ],
+                            ),
+                          )
+                        ],
+                      )
+                  ),
+                ),
+              ],
             ),
+
             floatingActionButton: AddGroupButton(),
-          )
+          );
+        }
         );
       case '/settings':
         return MaterialPageRoute(builder: (_) => SettingsPage());
