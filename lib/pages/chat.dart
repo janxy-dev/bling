@@ -78,36 +78,56 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _chatAppBar(widget.id),
-      body: Padding(
-        padding: EdgeInsets.only(bottom: 0.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-            messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-            messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-            messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-            messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-            messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-            //Input field
-            Divider(
-              height: 5.0,
-            ),
-            Row(
-              children: [
-                _textField,
-                SizedBox(
-                  width: 35.0,
-                  child: IconButton(onPressed: (){}, icon: Icon(Icons.send)),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 0.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              //Messages
+              Expanded(
+                child: ListView(
+                  children: [
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                  ],
                 ),
-                SizedBox(
-                  width: 40.0,
-                  child: IconButton(onPressed: (){}, icon: Icon(Icons.keyboard_voice)),
-                )
-              ],
-            )
-
-          ],
+              ),
+              //Input field
+              Divider(
+                height: 5.0,
+              ),
+              Row(
+                children: [
+                  _textField,
+                  SizedBox(
+                    width: 35.0,
+                    child: IconButton(onPressed: (){}, icon: Icon(Icons.send)),
+                  ),
+                  SizedBox(
+                    width: 40.0,
+                    child: IconButton(onPressed: (){}, icon: Icon(Icons.keyboard_voice)),
+                  )
+                ],
+              ),
+            ],
+          ),
         ),
       )
     );
