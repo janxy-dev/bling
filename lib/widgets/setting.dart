@@ -15,7 +15,7 @@ class Setting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+      padding: EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         child: Card(

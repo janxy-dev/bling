@@ -1,4 +1,4 @@
-import 'package:bling/widgets/group_banner.dart';
+import 'package:bling/widgets/chat_banner.dart';
 import 'package:flutter/material.dart';
 
 class ChatsPage extends StatelessWidget {
@@ -7,22 +7,10 @@ class ChatsPage extends StatelessWidget {
     return ListView(
       children: [
         Divider(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
-        GroupBanner(),
+        ChatBanner(ValueKey("johndoe")),
+        ChatBanner(ValueKey("isuskrist")),
+        ChatBanner(ValueKey("retard")),
+        ChatBanner(ValueKey("debil")),
       ],
     );
   }

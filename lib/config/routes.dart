@@ -1,4 +1,5 @@
-import 'package:bling/pages/calls.dart';
+import 'package:bling/pages/chat.dart';
+import 'package:bling/pages/friends.dart';
 import 'package:bling/pages/chats.dart';
 import 'package:bling/pages/profile.dart';
 import 'package:bling/widgets/app_bars.dart';
@@ -79,6 +80,8 @@ class Routes{
         );
       case '/settings':
         return MaterialPageRoute(builder: (_) => SettingsPage());
+      case '/chat':
+        return MaterialPageRoute(builder: (_) => Chat(settings.arguments as String));
       default:
         return _errorRoute;
     }
