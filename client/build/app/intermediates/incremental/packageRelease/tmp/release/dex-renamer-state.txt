@@ -1,4 +1,0 @@
-#Fri Jun 25 21:50:34 CEST 2021
-base.0=/home/jan/Desktop/bling/build/app/intermediates/dex/release/minifyReleaseWithR8/classes.dex
-renamed.0=classes.dex
-path.0=classes.dex
