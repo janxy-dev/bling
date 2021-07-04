@@ -1,9 +1,13 @@
 package main.java.bernardic.jb.server;
 
+import java.util.Properties;
+
 public class Server {
 
 	public static void main(String[] args) {
 		Configs.init();
-		System.out.println(Configs.get("database").getProperty("test"));
+		Properties dbProps = Configs.get("database");
+		Database database = new Database(dbProps.getProperty("url"), dbProps.getProperty("user"), dbProps.getProperty("password"));
+		database.testConnection();
 	}
 }
