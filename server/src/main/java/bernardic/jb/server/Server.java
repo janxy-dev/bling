@@ -1,4 +1,4 @@
-package com.janbernardic.server;
+package main.java.bernardic.jb.server;
 
 public class Server {
 
