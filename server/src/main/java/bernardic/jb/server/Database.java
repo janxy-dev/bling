@@ -20,23 +20,32 @@ public class Database {
 	    	e.printStackTrace();
 	    }
 	}
-	public int executeUpdate(String sql) {
-	      try(Connection conn = DriverManager.getConnection(url, user, pass);){
-  			Statement stmt = conn.createStatement();
-			return stmt.executeUpdate(sql);
-	      }catch(SQLException e) {
-	    	  e.printStackTrace();
-	      }
-		return 0;
-	}
-	public ResultSet executeQuery(String sql) {
-	      try(Connection conn = DriverManager.getConnection(url, user, pass);){
+	
+	public void createUsers() {
+		//Create users table if doesn't exist
+		try(Connection conn = DriverManager.getConnection(url, user, pass)){
+			String sql = "CREATE TABLE IF NOT EXISTS users ("
+					+ "token UUID NOT NULL PRIMARY KEY, "
+					+ "username VARCHAR(15) NOT NULL, "
+					+ "password CHAR(60) NOT NULL, "
+					+ "email VARCHAR(254) NOT NULL);";
 			Statement stmt = conn.createStatement();
-			return stmt.executeQuery(sql);
-	      }catch(SQLException e) {
-	    	  e.printStackTrace();
-	      }
-		return null;
+			stmt.executeUpdate(sql);
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void addUser(String username, String password, String email) {
+		try(Connection conn = DriverManager.getConnection(url, user, pass)){
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (token, username, password, email) VALUES (gen_random_uuid(), ?,?,?)");
+			stmt.setString(1, username);
+			stmt.setString(2, password);
+			stmt.setString(3, email);
+			stmt.executeUpdate();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }
