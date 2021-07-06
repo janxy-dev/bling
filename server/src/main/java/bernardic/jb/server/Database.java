@@ -1,16 +1,18 @@
 package main.java.bernardic.jb.server;
 
 import java.sql.*;
+import java.util.UUID;
 
 public class Database {
-	private final String url, user, pass;
+	private final String db_url, db_user, db_pass;
+	private final Connection getConnection() throws SQLException {return DriverManager.getConnection(db_url, db_user, db_pass);}
 	public Database(String url, String user, String pass) {
-		this.url = url;
-		this.user = user;
-		this.pass = pass;
+		this.db_url = url;
+		this.db_user = user;
+		this.db_pass = pass;
 	}
 	public void testConnection() {
-	    try(Connection conn = DriverManager.getConnection(url, user, pass);){
+	    try(Connection conn = getConnection()){
 	    	if(conn == null) {
 	    		System.out.println("Failed to connect to PostgreSQL Server");
 	    		return;
@@ -20,32 +22,44 @@ public class Database {
 	    	e.printStackTrace();
 	    }
 	}
-	
 	public void createUsers() {
 		//Create users table if doesn't exist
-		try(Connection conn = DriverManager.getConnection(url, user, pass)){
+		try(Connection conn = getConnection()){
 			String sql = "CREATE TABLE IF NOT EXISTS users ("
 					+ "token UUID NOT NULL PRIMARY KEY, "
-					+ "username VARCHAR(15) NOT NULL, "
-					+ "password CHAR(60) NOT NULL, "
-					+ "email VARCHAR(254) NOT NULL);";
+					+ "username VARCHAR(15) NOT NULL UNIQUE, "
+					+ "email VARCHAR(254) NOT NULL UNIQUE, "
+					+ "password CHAR(60) NOT NULL);";
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public void addUser(String username, String password, String email) {
-		try(Connection conn = DriverManager.getConnection(url, user, pass)){
-			PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (token, username, password, email) VALUES (gen_random_uuid(), ?,?,?)");
+	public String addUser(String username, String password, String email) {
+		UUID token = UUID.randomUUID();
+		try(Connection conn = getConnection()){
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (token, username, email, password) VALUES ('"+token+"', ?,?,?) ON CONFLICT DO NOTHING;");
 			stmt.setString(1, username);
-			stmt.setString(2, password);
-			stmt.setString(3, email);
+			stmt.setString(2, email);
+			stmt.setString(3, password);
 			stmt.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
+		return token.toString();
+	}
+	public User getUser(String token) {
+		try(Connection conn = getConnection()){
+			Statement stmt = conn.createStatement();
+			String sql = "SELECT * FROM users WHERE token='" + token + "';";
+			ResultSet res = stmt.executeQuery(sql);
+			res.next();
+			return new User(token, res.getString(2), res.getString(3), res.getString(4));
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 }
