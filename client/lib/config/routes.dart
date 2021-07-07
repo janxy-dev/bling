@@ -1,7 +1,8 @@
 import 'package:bling/pages/chat.dart';
-import 'package:bling/pages/friends.dart';
-import 'package:bling/pages/chats.dart';
-import 'package:bling/pages/profile.dart';
+import 'package:bling/pages/login.dart';
+import 'package:bling/pages/main/friends.dart';
+import 'package:bling/pages/main/chats.dart';
+import 'package:bling/pages/main/profile.dart';
 import 'package:bling/widgets/app_bars.dart';
 import 'package:bling/widgets/add_group_button.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class Routes{
   static Route<dynamic> generateRoute(RouteSettings settings){
     switch(settings.name){
       case '/':
+        if(settings.arguments == null) return MaterialPageRoute(builder: (_) => LoginPage());
         return MaterialPageRoute(builder: (context) {
           return Scaffold(
             body:
