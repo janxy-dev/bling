@@ -1,3 +1,4 @@
+import 'package:bling/core/auth/login.dart';
 import 'package:flutter/material.dart';
 class LoginPage extends StatelessWidget {
 
@@ -21,8 +22,8 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  TextEditingController username = TextEditingController();
-  TextEditingController password = TextEditingController();
+  final TextEditingController username = TextEditingController();
+  final TextEditingController password = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,8 +37,7 @@ class LoginPage extends StatelessWidget {
             getTextField("Username", username),
             getTextField("Password", password),
             TextButton(onPressed: (){
-              print(username.text);
-              print(password.text);
+              login(username.text, password.text);
             }, child: Text("Log In"))
           ],
         ),

@@ -2,6 +2,13 @@ package main.java.bernardic.jb.server;
 
 import java.util.Properties;
 
+import com.corundumstudio.socketio.AckRequest;
+import com.corundumstudio.socketio.Configuration;
+import com.corundumstudio.socketio.SocketIOClient;
+import com.corundumstudio.socketio.SocketIOServer;
+import com.corundumstudio.socketio.listener.ConnectListener;
+import com.corundumstudio.socketio.listener.DataListener;
+
 public class Server {
 	private static Database database;
 	public static Database getDatabase() { return database; }
@@ -12,7 +19,25 @@ public class Server {
 		database.testConnection();
 		database.createUsers();
 		database.addUser("jan", "123", "asd@gmail.com");
-		User user = database.getUser("72e95131-4f0b-4fd1-8402-ddd38a35f25e");
-		System.out.println(user.getEmail());
+		Configuration config = new Configuration();
+		config.setHostname("localhost");
+		config.setPort(5000);
+		final SocketIOServer server = new SocketIOServer(config);
+		server.addConnectListener(new ConnectListener() {
+			@Override
+			public void onConnect(SocketIOClient client) {
+				System.out.println("Connnected to " + client);
+			}
+		});
+        server.addEventListener("login", String.class, new DataListener<String>() {
+			@Override
+			public void onData(SocketIOClient client, String data, AckRequest ackSender) throws Exception {
+				String[] _data = data.split(":");
+				System.out.println(_data[0] + ", " + _data[1]);
+			}
+        });
+        server.start();
+		
+		
 	}
 }

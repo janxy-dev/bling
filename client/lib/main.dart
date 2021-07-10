@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'config/routes.dart';
 import 'config/themes.dart';
+import 'core/client.dart';
 
 void main() {
   runApp(Bling());
@@ -16,6 +17,7 @@ class _BlingState extends State<Bling> {
   @override
   void initState(){
     super.initState();
+    Client.connect();
     Themes.themes.addListener(() {
       setState(() {});
     });
