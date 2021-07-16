@@ -33,7 +33,9 @@ public class Server {
 			@Override
 			public void onData(SocketIOClient client, String data, AckRequest ackSender) throws Exception {
 				String[] _data = data.split(":");
-				System.out.println(_data[0] + ", " + _data[1]);
+				String username = _data[0];
+				String password = _data[1];
+				client.sendEvent("login", database.authUser(username, password));
 			}
         });
         server.start();

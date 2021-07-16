@@ -1,4 +1,4 @@
-import 'package:bling/core/auth/login.dart';
+import 'package:bling/core/client.dart';
 import 'package:flutter/material.dart';
 class LoginPage extends StatelessWidget {
 
@@ -37,7 +37,15 @@ class LoginPage extends StatelessWidget {
             getTextField("Username", username),
             getTextField("Password", password),
             TextButton(onPressed: (){
-              login(username.text, password.text);
+              Client.login(username.text, password.text);
+              Future.doWhile(() async {
+                if(Client.token.length == 36){
+                  Navigator.of(context).pushNamed("/", arguments: Client.token);
+                  return false;
+                }
+                await Future.delayed(Duration(milliseconds: 20));
+                return true;
+              });
             }, child: Text("Log In"))
           ],
         ),
