@@ -39,15 +39,19 @@ class _LoginPageState extends State<LoginPage> {
       resizeToAvoidBottomInset: false,
       appBar: PreferredSize(preferredSize: Size.fromHeight(56.0),
       child: SettingsAppBar("")),
-      body: SizedBox(
+      body: Container(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Column(
-              children: errors.map((e) => Text(e, style: TextStyle(color: Colors.red),)).toList()
+            Container(
+              height: MediaQuery.of(context).size.height/4,
+              width: 200.0,
+              padding: EdgeInsets.only(bottom: 10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: errors.map((e) => Text(e, style: TextStyle(color: Colors.red),)).toList()
+              ),
             ),
             _textField("Username", username),
             _textField("Password", password),

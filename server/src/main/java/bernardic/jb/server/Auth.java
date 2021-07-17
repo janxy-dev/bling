@@ -30,27 +30,40 @@ public class Auth {
 	private void handleRegister() {
         server.addEventListener("register", String.class, new DataListener<String>() {
 			@Override
-			public void onData(SocketIOClient client, String data, AckRequest ackSender) throws Exception {
-				String[] _data = data.split(":");
-				String username = _data[0];
-				String email = _data[1];
-				String password = _data[2];
-				String conPassword = _data[3];
-				String error = "";
-				//check if username is already in use
-				if(Server.getDatabase().hasUsername(username)) {
-					error += "Username is in use!\n";
+			public void onData(SocketIOClient client, String data, AckRequest ackSender) {
+				try {
+					String[] _data = data.split(":");
+					String username = _data[0].trim();
+					String email = _data[1].trim();
+					String password = _data[2].trim();
+					String conPassword = _data[3].trim();
+					String error = "";
+					if(Server.getDatabase().hasUsername(username)) {
+						error += "Username is in use!\n";
+					}
+					if(username.isEmpty()) {
+						error += "Username field is empty!\n";
+					}
+					if(Server.getDatabase().hasEmail(email)) {
+						error += "Email is in use!\n";
+					}
+					if(email.isEmpty()) {
+						error += "Email field is empty!\n";
+					}
+					if(!password.equals(conPassword)) {
+						error += "Passwords don't match!\n";
+					}
+					if(password.isEmpty()) {
+						error += "Password field is empty!\n";
+					}
+					if(error.isEmpty()) {
+						client.sendEvent("login", Server.getDatabase().addUser(username, password, email));
+					}
+					else client.sendEvent("login", '*'+error);
+				}catch(Exception e) {
+					e.printStackTrace();
 				}
-				if(Server.getDatabase().hasEmail(email)) {
-					error += "Email is in use!\n";
-				}
-				if(!password.equals(conPassword)) {
-					error+= "Passwords don't match!\n";
-				}
-				if(error.isEmpty()) {
-					client.sendEvent("login", Server.getDatabase().addUser(username, password, email));
-				}
-				else client.sendEvent("login", '*'+error);
+
 				
 			}
         });

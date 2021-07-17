@@ -27,6 +27,7 @@ class Client{
           logging = false;
           if(Client.token[0] != '*'){
             if(onSuccess != null) onSuccess();
+            Client.token = "";
             return false;
           }
           String err = Client.token.substring(1);
@@ -42,11 +43,11 @@ class Client{
     }
   }
    static void login(String username, String password, {void onSuccess()?, void onError(List<String> err)?}){
-     socket.emit("login", "$username:$password");
+     socket.emit("login", " $username: $password");
      _auth(onSuccess, onError);
    }
    static void register(String username, String email, String password, String conPassword, {void onSuccess()?, void onError(err)?}){
-    socket.emit("register", "$username:$email:$password:$conPassword");
+    socket.emit("register", " $username: $email: $password: $conPassword");
     _auth(onSuccess, onError);
    }
 }
