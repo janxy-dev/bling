@@ -2,12 +2,10 @@ package main.java.bernardic.jb.server;
 
 import java.util.Properties;
 
-import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.Configuration;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
-import com.corundumstudio.socketio.listener.DataListener;
 
 public class Server {
 	private static Database database;
@@ -18,28 +16,18 @@ public class Server {
 		database = new Database(dbProps.getProperty("url"), dbProps.getProperty("user"), dbProps.getProperty("password"));
 		database.testConnection();
 		database.createUsers();
-		database.addUser("jan", "123", "asd@gmail.com");
 		Configuration config = new Configuration();
 		config.setHostname("localhost");
 		config.setPort(5000);
-		final SocketIOServer server = new SocketIOServer(config);
+		SocketIOServer server = new SocketIOServer(config);
+		Auth auth = new Auth(server);
 		server.addConnectListener(new ConnectListener() {
 			@Override
 			public void onConnect(SocketIOClient client) {
 				System.out.println("Connnected to " + client);
 			}
 		});
-        server.addEventListener("login", String.class, new DataListener<String>() {
-			@Override
-			public void onData(SocketIOClient client, String data, AckRequest ackSender) throws Exception {
-				String[] _data = data.split(":");
-				String username = _data[0];
-				String password = _data[1];
-				client.sendEvent("login", database.authUser(username, password));
-			}
-        });
+		auth.init();
         server.start();
-		
-		
 	}
 }

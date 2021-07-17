@@ -1,8 +1,9 @@
 import 'package:bling/core/client.dart';
+import 'package:bling/widgets/app_bars.dart';
 import 'package:flutter/material.dart';
-class LoginPage extends StatelessWidget {
+class SignupPage extends StatelessWidget {
 
-  Widget getTextField(String label, TextEditingController _controller){
+  Widget textField(String label, TextEditingController _controller){
     return Container(
       height: 26.0,
       width: 200.0,
@@ -23,10 +24,15 @@ class LoginPage extends StatelessWidget {
   }
 
   final TextEditingController username = TextEditingController();
+  final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
+  final TextEditingController conPassword = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: PreferredSize(preferredSize: Size.fromHeight(56.0),
+          child: SettingsAppBar("")),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -34,19 +40,14 @@ class LoginPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            getTextField("Username", username),
-            getTextField("Password", password),
+            textField("Username", username),
+            textField("Email", email),
+            textField("Password", password),
+            textField("Confirm Password", conPassword),
             TextButton(onPressed: (){
-              Client.login(username.text, password.text);
-              Future.doWhile(() async {
-                if(Client.token.length == 36){
-                  Navigator.of(context).pushNamed("/", arguments: Client.token);
-                  return false;
-                }
-                await Future.delayed(Duration(milliseconds: 20));
-                return true;
-              });
-            }, child: Text("Log In"))
+              Client.register(username.text, email.text, password.text, conPassword.text, onSuccess: ()=>Navigator.of(context).pushNamed("/", arguments: Client.token),
+              onError: (err)=>print(err));
+            }, child: Text("Sign up"))
           ],
         ),
       ),

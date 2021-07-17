@@ -74,5 +74,31 @@ public class Database {
 		}
 		return null;
 	}
+	public boolean hasEmail(String email) {
+		try(Connection conn = getConnection()){
+			Statement stmt = conn.createStatement();
+			String sql = "SELECT EXISTS(SELECT 1 FROM users WHERE email='"+email+"')";
+			ResultSet res = stmt.executeQuery(sql);
+			if(res.next()) {
+				return res.getBoolean(1);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	public boolean hasUsername(String username) {
+		try(Connection conn = getConnection()){
+			Statement stmt = conn.createStatement();
+			String sql = "SELECT EXISTS(SELECT 1 FROM users WHERE username='"+username+"')";
+			ResultSet res = stmt.executeQuery(sql);
+			if(res.next()) {
+				return res.getBoolean(1);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	
 }

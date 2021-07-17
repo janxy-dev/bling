@@ -107,10 +107,12 @@ class _SecondaryAppBarState extends State<SecondaryAppBar> {
 
 class SettingsAppBar extends StatelessWidget{
   final String title;
-  SettingsAppBar(this.title);
+  final Color? color;
+  SettingsAppBar(this.title, {this.color});
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: color,
       title: Text(title),
       centerTitle: true,
       elevation: 0,

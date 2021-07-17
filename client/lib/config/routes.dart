@@ -1,5 +1,7 @@
+import 'package:bling/pages/auth.dart';
+import 'package:bling/pages/auth/login.dart';
+import 'package:bling/pages/auth/signup.dart';
 import 'package:bling/pages/chat.dart';
-import 'package:bling/pages/login.dart';
 import 'package:bling/pages/main/friends.dart';
 import 'package:bling/pages/main/chats.dart';
 import 'package:bling/pages/main/profile.dart';
@@ -34,7 +36,7 @@ class Routes{
   static Route<dynamic> generateRoute(RouteSettings settings){
     switch(settings.name){
       case '/':
-        if(settings.arguments == null) return MaterialPageRoute(builder: (_) => LoginPage());
+        if(settings.arguments == null) return MaterialPageRoute(builder: (_) => AuthPage());
         return MaterialPageRoute(builder: (context) {
           return Scaffold(
             body:
@@ -84,12 +86,16 @@ class Routes{
         return MaterialPageRoute(builder: (_) => SettingsPage());
       case '/chat':
         return MaterialPageRoute(builder: (_) => Chat(settings.arguments as String));
+      case '/login':
+        return MaterialPageRoute(builder: (_) => LoginPage());
+      case '/signup':
+        return MaterialPageRoute(builder: (_) => SignupPage());
       default:
         return _errorRoute;
     }
   }
   static Route<dynamic> _errorRoute =
     MaterialPageRoute(builder: (_) => Scaffold(
-      body: Text("ERROR"),
+      body: SafeArea(child: Text("ERROR")),
     ));
 }
