@@ -22,7 +22,7 @@ public class Auth {
 				String username = _data[0];
 				String password = _data[1];
 				String token = Server.getDatabase().authUser(username, password);
-				if(token == null) token = "*Password or/and username is invalid!";
+				if(token == null) token = "*Password or/and username is invalid!\n";
 				client.sendEvent("login", token);
 			}
         });

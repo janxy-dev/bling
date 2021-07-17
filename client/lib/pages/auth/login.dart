@@ -1,9 +1,15 @@
 import 'package:bling/core/client.dart';
 import 'package:bling/widgets/app_bars.dart';
 import 'package:flutter/material.dart';
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
 
-  Widget textField(String label, TextEditingController _controller){
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+
+  Widget _textField(String label, TextEditingController _controller){
     return Container(
       height: 26.0,
       width: 200.0,
@@ -25,7 +31,8 @@ class LoginPage extends StatelessWidget {
 
   final TextEditingController username = TextEditingController();
   final TextEditingController password = TextEditingController();
-  bool logging = false;
+  List<String> errors = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,11 +46,19 @@ class LoginPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            textField("Username", username),
-            textField("Password", password),
+            Column(
+              children: errors.map((e) => Text(e, style: TextStyle(color: Colors.red),)).toList()
+            ),
+            _textField("Username", username),
+            _textField("Password", password),
             TextButton(onPressed: (){
               Client.login(username.text, password.text, onSuccess: ()=>Navigator.of(context).pushNamed("/", arguments: Client.token),
-              onError: (err)=>print(err));
+              onError: (err){
+                setState(() {
+                  print(err);
+                  errors = err;
+                });
+              });
             }, child: Text("Log In"))
           ],
         ),
