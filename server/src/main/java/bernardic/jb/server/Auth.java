@@ -1,5 +1,8 @@
 package main.java.bernardic.jb.server;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
@@ -27,6 +30,12 @@ public class Auth {
 			}
         });
 	}
+	private boolean checkInvalidCharacters(String string) {
+		System.out.println(string);
+		Pattern p = Pattern.compile("[^a-z0-9._+-]", Pattern.CASE_INSENSITIVE);
+		Matcher m = p.matcher(string);
+		return m.find();
+	}
 	private void handleRegister() {
         server.addEventListener("register", String.class, new DataListener<String>() {
 			@Override
@@ -38,24 +47,14 @@ public class Auth {
 					String password = _data[2].trim();
 					String conPassword = _data[3].trim();
 					String error = "";
-					if(Server.getDatabase().hasUsername(username)) {
-						error += "Username is in use!\n";
-					}
-					if(username.isEmpty()) {
-						error += "Username field is empty!\n";
-					}
-					if(Server.getDatabase().hasEmail(email)) {
-						error += "Email is in use!\n";
-					}
-					if(email.isEmpty()) {
-						error += "Email field is empty!\n";
-					}
-					if(!password.equals(conPassword)) {
-						error += "Passwords don't match!\n";
-					}
-					if(password.isEmpty()) {
-						error += "Password field is empty!\n";
-					}
+					if(Server.getDatabase().hasUsername(username)) error += "Username is in use!\n";
+					if(username.isEmpty()) error += "Username field is empty!\n";
+					if(checkInvalidCharacters(username)) error += "Username contains invalid characters!\n";
+					if(Server.getDatabase().hasEmail(email)) error += "Email is in use!\n";
+					if(email.isEmpty()) error += "Email field is empty!\n";
+					if(checkInvalidCharacters(email)) error += "Email contains invalid characters!\n";
+					if(!password.equals(conPassword)) error += "Passwords don't match!\n";
+					if(password.isEmpty()) error += "Password field is empty!\n";
 					if(error.isEmpty()) {
 						client.sendEvent("login", Server.getDatabase().addUser(username, password, email));
 					}
