@@ -33,8 +33,13 @@ public class Auth {
 			}
         });
 	}
-	private boolean checkInvalidCharacters(String string) {
-		Pattern p = Pattern.compile("[^a-z0-9._+-]", Pattern.CASE_INSENSITIVE);
+	private boolean usernameCharacters(String string) {
+		Pattern p = Pattern.compile("^$|[a-z0-9._-]", Pattern.CASE_INSENSITIVE);
+		Matcher m = p.matcher(string);
+		return m.find();
+	}
+	private boolean emailCharacters(String string) {
+		Pattern p = Pattern.compile("^$|[a-z0-9._+@-]", Pattern.CASE_INSENSITIVE);
 		Matcher m = p.matcher(string);
 		return m.find();
 	}
@@ -50,10 +55,10 @@ public class Auth {
 				String error = "";
 				if(Server.getDatabase().hasUsername(username)) error += "Username is in use!\n";
 				if(username.isEmpty()) error += "Username field is empty!\n";
-				if(checkInvalidCharacters(username)) error += "Username contains invalid characters!\n";
+				if(!usernameCharacters(username)) error += "Username contains invalid characters!\n";
 				if(Server.getDatabase().hasEmail(email)) error += "Email is in use!\n";
 				if(email.isEmpty()) error += "Email field is empty!\n";
-				if(checkInvalidCharacters(email)) error += "Email contains invalid characters!\n";
+				if(!emailCharacters(email)) error += "Email contains invalid characters!\n";
 				if(!password.equals(conPassword)) error += "Passwords don't match!\n";
 				if(password.isEmpty()) error += "Password field is empty!\n";
 				if(error.isEmpty()) {

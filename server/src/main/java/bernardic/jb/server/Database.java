@@ -3,6 +3,8 @@ package main.java.bernardic.jb.server;
 import java.sql.*;
 import java.util.UUID;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class Database {
 	private final String db_url, db_user, db_pass;
 	private final Connection getConnection() throws SQLException {return DriverManager.getConnection(db_url, db_user, db_pass);}
@@ -42,7 +44,7 @@ public class Database {
 			PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (token, username, email, password) VALUES ('"+token+"', ?,?,?) ON CONFLICT DO NOTHING;");
 			stmt.setString(1, username);
 			stmt.setString(2, email);
-			stmt.setString(3, password);
+			stmt.setString(3, BCrypt.hashpw(password, BCrypt.gensalt()));
 			stmt.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
@@ -66,7 +68,7 @@ public class Database {
 			Statement stmt = conn.createStatement();
 			String sql = "SELECT password, token FROM users WHERE username='" + username + "' OR email='"+username+"';";
 			ResultSet res = stmt.executeQuery(sql);
-			if(res.next() && res.getString(1).strip().equals(password)) {
+			if(res.next() && BCrypt.checkpw(password, res.getString(1))) {
 				return res.getString(2);
 			}
 		}catch(SQLException e) {
