@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'package:bling/core/user.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+
+import 'models/LoginModel.dart';
+import 'models/RegisterModel.dart';
 
 class Client{
    static late LocalUser localUser;
@@ -42,12 +46,12 @@ class Client{
       });
     }
   }
-   static void login(String username, String password, {void onSuccess()?, void onError(List<String> err)?}){
-     socket.emit("login", " $username: $password");
+   static void login(LoginModel loginModel, {void onSuccess()?, void onError(List<String> err)?}){
+     socket.emit("login", jsonEncode(loginModel.toJson()));
      _auth(onSuccess, onError);
    }
-   static void register(String username, String email, String password, String conPassword, {void onSuccess()?, void onError(err)?}){
-    socket.emit("register", " $username: $email: $password: $conPassword");
+   static void register(RegisterModel registerModel, {void onSuccess()?, void onError(err)?}){
+    socket.emit("register", jsonEncode(registerModel.toJson()));
     _auth(onSuccess, onError);
    }
 }

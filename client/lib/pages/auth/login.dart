@@ -1,4 +1,5 @@
 import 'package:bling/core/client.dart';
+import 'package:bling/core/models/LoginModel.dart';
 import 'package:bling/widgets/app_bars.dart';
 import 'package:flutter/material.dart';
 class LoginPage extends StatefulWidget {
@@ -56,10 +57,9 @@ class _LoginPageState extends State<LoginPage> {
             _textField("Username", username),
             _textField("Password", password),
             TextButton(onPressed: (){
-              Client.login(username.text, password.text, onSuccess: ()=>Navigator.of(context).pushNamed("/", arguments: Client.token),
+              Client.login(new LoginModel(username.text, password.text), onSuccess: ()=>Navigator.of(context).pushNamed("/", arguments: Client.token),
               onError: (err){
                 setState(() {
-                  print(err);
                   errors = err;
                 });
               });

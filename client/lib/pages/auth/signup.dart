@@ -1,4 +1,5 @@
 import 'package:bling/core/client.dart';
+import 'package:bling/core/models/RegisterModel.dart';
 import 'package:bling/widgets/app_bars.dart';
 import 'package:flutter/material.dart';
 class SignupPage extends StatefulWidget {
@@ -63,7 +64,7 @@ class _SignupPageState extends State<SignupPage> {
             textField("Password", password),
             textField("Confirm Password", conPassword),
             TextButton(onPressed: (){
-              Client.register(username.text, email.text, password.text, conPassword.text, onSuccess: ()=>Navigator.of(context).pushNamed("/", arguments: Client.token),
+              Client.register(RegisterModel(username.text, email.text, password.text, conPassword.text), onSuccess: ()=>Navigator.of(context).pushNamed("/", arguments: Client.token),
               onError: (err){
                 setState(() {
                   errors = err;
