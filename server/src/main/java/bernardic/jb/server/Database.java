@@ -64,7 +64,7 @@ public class Database {
 	public String authUser(String username, String password) {
 		try(Connection conn = getConnection()){
 			Statement stmt = conn.createStatement();
-			String sql = "SELECT password, token FROM users WHERE username='" + username + "';";
+			String sql = "SELECT password, token FROM users WHERE username='" + username + "' OR email='"+username+"';";
 			ResultSet res = stmt.executeQuery(sql);
 			if(res.next() && res.getString(1).strip().equals(password)) {
 				return res.getString(2);

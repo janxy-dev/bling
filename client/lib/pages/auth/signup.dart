@@ -9,12 +9,14 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  Widget textField(String label, TextEditingController _controller){
+
+  Widget _textField(String label, TextEditingController _controller, {bool obscureText = false}){
     return Container(
       height: 26.0,
       width: 200.0,
       margin: EdgeInsets.only(top: 5.0),
       child: TextField(
+        obscureText: obscureText,
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(
@@ -30,13 +32,9 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   final TextEditingController username = TextEditingController();
-
   final TextEditingController email = TextEditingController();
-
   final TextEditingController password = TextEditingController();
-
   final TextEditingController conPassword = TextEditingController();
-
   List<String> errors = [];
 
   @override
@@ -59,10 +57,10 @@ class _SignupPageState extends State<SignupPage> {
                   children: errors.map((e) => Text(e, style: TextStyle(color: Colors.red),)).toList()
               ),
             ),
-            textField("Username", username),
-            textField("Email", email),
-            textField("Password", password),
-            textField("Confirm Password", conPassword),
+            _textField("Username", username),
+            _textField("Email", email),
+            _textField("Password", password, obscureText: true),
+            _textField("Confirm Password", conPassword, obscureText: true),
             TextButton(onPressed: (){
               Client.register(RegisterModel(username.text, email.text, password.text, conPassword.text), onSuccess: ()=>Navigator.of(context).pushNamed("/", arguments: Client.token),
               onError: (err){
