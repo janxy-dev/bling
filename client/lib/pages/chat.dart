@@ -45,7 +45,7 @@ class _ChatState extends State<Chat> {
 
   Widget messageBuilder(Message message){
     return Container(
-      padding: EdgeInsets.only(bottom: 10.0),
+      padding: EdgeInsets.only(top: 10.0),
       child: Column(
         children: [
           Padding(
@@ -77,58 +77,56 @@ class _ChatState extends State<Chat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: _chatAppBar(widget.id),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 0.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          //Messages
+          Expanded(
+            child: ListView(
+              reverse: true,
+              padding: EdgeInsets.only(bottom: 10.0),
+              children: [
+                messageBuilder(new Message("aLorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
+              ].reversed.toList(),
+            ),
+          ),
+          //Input field
+          Divider(
+            height: 5.0,
+          ),
+          Row(
             children: [
-              //Messages
-              Expanded(
-                child: ListView(
-                  children: [
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                    messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                  ],
-                ),
+              _textField,
+              SizedBox(
+                width: 35.0,
+                child: IconButton(onPressed: (){}, icon: Icon(Icons.send)),
               ),
-              //Input field
-              Divider(
-                height: 5.0,
-              ),
-              Row(
-                children: [
-                  _textField,
-                  SizedBox(
-                    width: 35.0,
-                    child: IconButton(onPressed: (){}, icon: Icon(Icons.send)),
-                  ),
-                  SizedBox(
-                    width: 40.0,
-                    child: IconButton(onPressed: (){}, icon: Icon(Icons.keyboard_voice)),
-                  )
-                ],
-              ),
+              SizedBox(
+                width: 40.0,
+                child: IconButton(onPressed: (){}, icon: Icon(Icons.keyboard_voice)),
+              )
             ],
           ),
-        ),
+        ],
       )
     );
   }
