@@ -2,7 +2,6 @@ package main.java.bernardic.jb.server;
 
 import java.sql.*;
 import java.util.UUID;
-
 import org.mindrot.jbcrypt.BCrypt;
 
 public class Database {

@@ -1,5 +1,5 @@
 import 'package:bling/core/client.dart';
-import 'package:bling/core/models/LoginModel.dart';
+import 'package:bling/core/models/login.dart';
 import 'package:bling/widgets/app_bars.dart';
 import 'package:flutter/material.dart';
 class LoginPage extends StatefulWidget {

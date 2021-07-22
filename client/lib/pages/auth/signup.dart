@@ -1,5 +1,5 @@
 import 'package:bling/core/client.dart';
-import 'package:bling/core/models/RegisterModel.dart';
+import 'package:bling/core/models/register.dart';
 import 'package:bling/widgets/app_bars.dart';
 import 'package:flutter/material.dart';
 class SignupPage extends StatefulWidget {

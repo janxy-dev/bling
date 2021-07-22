@@ -1,15 +1,16 @@
+import 'dart:collection';
 import 'dart:convert';
-import 'package:bling/core/user.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-import 'models/LoginModel.dart';
-import 'models/RegisterModel.dart';
+import 'models/login.dart';
+import 'models/register.dart';
+import 'models/user.dart';
 
 class Client{
-   static late LocalUser localUser;
    static late IO.Socket socket;
    static String token = "";
-   static bool logging = false;
+   static bool isAuthenticating = false;
+   static bool isFetching = false;
   static void connect(){
      socket = IO.io("http://10.0.2.2:5000", <String, dynamic>{
        "transports": ["websocket"],
@@ -24,14 +25,13 @@ class Client{
      });
   }
   static void _auth(void onSuccess()?, void onError(List<String> err)?){
-    if(!logging){
-      logging = true;
+    if(!isAuthenticating){
+      isAuthenticating = true;
       Future.doWhile(() async {
         if(Client.token.isNotEmpty){
-          logging = false;
+          isAuthenticating = false;
           if(Client.token[0] != '*'){
             if(onSuccess != null) onSuccess();
-            Client.token = "";
             return false;
           }
           String err = Client.token.substring(1);
@@ -53,5 +53,12 @@ class Client{
    static void register(RegisterModel registerModel, {void onSuccess()?, void onError(err)?}){
     socket.emit("register", jsonEncode(registerModel.toJson()));
     _auth(onSuccess, onError);
+   }
+   static void fetch(String event, void onData(json)){
+    if(isFetching) return null;
+    socket.emit(event, token);
+    socket.on(event, (data){
+      onData(data);
+    });
    }
 }

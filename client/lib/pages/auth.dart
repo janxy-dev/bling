@@ -1,4 +1,3 @@
-import 'package:bling/core/client.dart';
 import 'package:flutter/material.dart';
 class AuthPage extends StatelessWidget {
   @override
