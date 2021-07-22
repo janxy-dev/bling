@@ -12,9 +12,11 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     Client.fetch("fetchLocalUser", (json) {
-      setState(() {
-        user = UserModel.fromJson(json);
-      });
+      if(this.mounted){
+        setState(() {
+          user = UserModel.fromJson(json);
+        });
+      }
     });
       return ListView(
         children: [

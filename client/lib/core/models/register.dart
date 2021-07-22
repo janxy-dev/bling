@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class RegisterModel{
   final String username;
   final String email;
@@ -5,10 +7,10 @@ class RegisterModel{
   final String conPassword;
   RegisterModel(this.username, this.email, this.password, this.conPassword);
 
-  Map<String, dynamic> toJson() => {
+  String toJson() => jsonEncode({
     'username': username,
     'email': email,
     'password': password,
     'conPassword': conPassword
-  };
+  });
 }

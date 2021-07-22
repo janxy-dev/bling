@@ -1,10 +1,7 @@
-import 'dart:collection';
-import 'dart:convert';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'models/login.dart';
 import 'models/register.dart';
-import 'models/user.dart';
 
 class Client{
    static late IO.Socket socket;
@@ -47,11 +44,11 @@ class Client{
     }
   }
    static void login(LoginModel loginModel, {void onSuccess()?, void onError(List<String> err)?}){
-     socket.emit("login", jsonEncode(loginModel.toJson()));
+     socket.emit("login", loginModel.toJson());
      _auth(onSuccess, onError);
    }
    static void register(RegisterModel registerModel, {void onSuccess()?, void onError(err)?}){
-    socket.emit("register", jsonEncode(registerModel.toJson()));
+    socket.emit("register", registerModel.toJson());
     _auth(onSuccess, onError);
    }
    static void fetch(String event, void onData(json)){
