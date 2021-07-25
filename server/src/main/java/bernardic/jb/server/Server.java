@@ -30,10 +30,12 @@ public class Server {
 		});
 		
 		FetchHandler fetchHandler = new FetchHandler(server);
-		Auth auth = new Auth(server);
+		AuthHandler authHandler = new AuthHandler(server);
+		GroupHandler groupHandler = new GroupHandler(server);
 		
-		auth.init();
+		authHandler.init();
 		fetchHandler.init();
+		groupHandler.init();
         server.start();
 	}
 }

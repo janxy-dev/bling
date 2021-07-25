@@ -10,7 +10,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   UserModel user = UserModel();
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     Client.fetch("fetchLocalUser", (json) {
       if(this.mounted){
         setState(() {
@@ -18,6 +19,9 @@ class _ProfilePageState extends State<ProfilePage> {
         });
       }
     });
+  }
+  @override
+  Widget build(BuildContext context) {
       return ListView(
         children: [
           Text("Username: " + user.username)

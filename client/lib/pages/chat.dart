@@ -1,9 +1,10 @@
+import 'package:bling/core/models/group.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Chat extends StatefulWidget {
-  final String id;
-  Chat(this.id);
+  final GroupModel group;
+  Chat(this.group);
 
   @override
   _ChatState createState() => _ChatState();
@@ -78,7 +79,7 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: _chatAppBar(widget.id),
+      appBar: _chatAppBar(widget.group.name),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

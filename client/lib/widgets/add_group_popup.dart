@@ -1,3 +1,4 @@
+import 'package:bling/widgets/create_group_popup.dart';
 import 'package:bling/widgets/join_group_popup.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,9 @@ dynamic showAddGroupPopup(BuildContext context){
             height: 5.0,
           ),
           TextButton(
-            onPressed: (){},
+            onPressed: (){
+              showCreateGroupPopup(context);
+            },
               child: Text("Create Group",
                 style: TextStyle(fontSize: 15.0),),
             )

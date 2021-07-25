@@ -1,7 +1,5 @@
 package main.java.bernardic.jb.server.models;
 
-import org.json.JSONObject;
-
 public class UserModel {
 	private final String username;
 	public UserModel(String username) {
@@ -9,9 +7,5 @@ public class UserModel {
 	}
 	public String getUsername() {
 		return username;
-	}
-	public String toJson() {
-		JSONObject json = new JSONObject(this);
-		return json.toString();
 	}
 }

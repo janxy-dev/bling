@@ -1,3 +1,4 @@
+import 'package:bling/core/models/group.dart';
 import 'package:bling/pages/auth.dart';
 import 'package:bling/pages/auth/login.dart';
 import 'package:bling/pages/auth/signup.dart';
@@ -85,7 +86,7 @@ class Routes{
       case '/settings':
         return MaterialPageRoute(builder: (_) => SettingsPage());
       case '/chat':
-        return MaterialPageRoute(builder: (_) => Chat(settings.arguments as String));
+        return MaterialPageRoute(builder: (_) => Chat(settings.arguments as GroupModel));
       case '/login':
         return MaterialPageRoute(builder: (_) => LoginPage());
       case '/signup':

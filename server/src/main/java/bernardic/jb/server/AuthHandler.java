@@ -11,9 +11,9 @@ import com.corundumstudio.socketio.listener.DataListener;
 import main.java.bernardic.jb.server.models.LoginModel;
 import main.java.bernardic.jb.server.models.RegisterModel;
 
-public class Auth {
+public class AuthHandler {
 	SocketIOServer server;
-	public Auth(SocketIOServer server) {
+	public AuthHandler(SocketIOServer server) {
 		this.server = server;
 	}
 	public void init() {

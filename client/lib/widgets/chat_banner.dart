@@ -1,8 +1,9 @@
+import 'package:bling/core/models/group.dart';
 import 'package:flutter/material.dart';
 
 class ChatBanner extends StatefulWidget {
-  final ValueKey key;
-  ChatBanner(this.key) : super(key: key);
+  final GroupModel group;
+  ChatBanner(this.group) : super(key: ValueKey(group.groupUUID));
 
   @override
   _ChatBannerState createState() => _ChatBannerState();
@@ -13,7 +14,7 @@ class _ChatBannerState extends State<ChatBanner> {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => Navigator.of(context).pushNamed("/chat", arguments: widget.key.value),
+      onTap: () => Navigator.of(context).pushNamed("/chat", arguments: widget.group),
       child: Padding(
         padding: EdgeInsets.only(left: 15.0),
         child: Row(
@@ -34,7 +35,7 @@ class _ChatBannerState extends State<ChatBanner> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(widget.key.value, style: TextStyle(fontSize: 14)),
+                      Text(widget.group.name, style: TextStyle(fontSize: 14)),
                       Text("Lorem ipsum dolor sit amet...", style: TextStyle(fontSize: 12))
                     ],
                   ),

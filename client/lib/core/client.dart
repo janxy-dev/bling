@@ -1,5 +1,6 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+import 'models/group.dart';
 import 'models/login.dart';
 import 'models/register.dart';
 
@@ -57,5 +58,10 @@ class Client{
     socket.on(event, (data){
       onData(data);
     });
+   }
+   static void createGroup(String groupName){
+    GroupModel group = GroupModel(<String>[Client.token]);
+    group.name = groupName;
+    socket.emit("createGroup", group);
    }
 }
