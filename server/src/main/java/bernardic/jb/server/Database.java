@@ -81,9 +81,10 @@ public class Database {
 	}
 	public String authUser(String username, String password) {
 		try(Connection conn = getConnection()){
-			Statement stmt = conn.createStatement();
-			String sql = "SELECT password, token FROM users WHERE username='" + username + "' OR email='"+username+"';";
-			ResultSet res = stmt.executeQuery(sql);
+			PreparedStatement stmt = conn.prepareStatement("SELECT password, token FROM users WHERE username=? OR email=?");
+			stmt.setString(1, username);
+			stmt.setString(2, password);
+			ResultSet res = stmt.executeQuery();
 			if(res.next() && BCrypt.checkpw(password, res.getString(1))) {
 				return res.getString(2);
 			}
@@ -94,9 +95,9 @@ public class Database {
 	}
 	public boolean hasEmail(String email) {
 		try(Connection conn = getConnection()){
-			Statement stmt = conn.createStatement();
-			String sql = "SELECT EXISTS(SELECT 1 FROM users WHERE email='"+email+"')";
-			ResultSet res = stmt.executeQuery(sql);
+			PreparedStatement stmt = conn.prepareStatement("SELECT EXISTS(SELECT 1 FROM users WHERE email=?)");
+			stmt.setString(1, email);
+			ResultSet res = stmt.executeQuery();
 			if(res.next()) {
 				return res.getBoolean(1);
 			}
@@ -107,9 +108,9 @@ public class Database {
 	}
 	public boolean hasUsername(String username) {
 		try(Connection conn = getConnection()){
-			Statement stmt = conn.createStatement();
-			String sql = "SELECT EXISTS(SELECT 1 FROM users WHERE username='"+username+"')";
-			ResultSet res = stmt.executeQuery(sql);
+			PreparedStatement stmt = conn.prepareStatement("SELECT EXISTS(SELECT 1 FROM users WHERE username=?)");
+			stmt.setString(1, username);
+			ResultSet res = stmt.executeQuery();
 			if(res.next()) {
 				return res.getBoolean(1);
 			}
