@@ -1,3 +1,4 @@
+import 'package:bling/core/client.dart';
 import 'package:bling/core/models/group.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,11 +28,13 @@ class _ChatState extends State<Chat> {
     centerTitle: true,
   );
 
+  TextEditingController textCtrl = TextEditingController();
   Widget get _textField => Expanded(
     child: Container(
       height: 26.0,
       margin: EdgeInsets.only(left: 15.0),
       child: TextField(
+        controller: textCtrl,
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: const BorderRadius.all(
@@ -119,7 +122,9 @@ class _ChatState extends State<Chat> {
               _textField,
               SizedBox(
                 width: 35.0,
-                child: IconButton(onPressed: (){}, icon: Icon(Icons.send)),
+                child: IconButton(onPressed: (){
+                  Client.sendMessage(textCtrl.text, widget.group.groupUUID);
+                }, icon: Icon(Icons.send)),
               ),
               SizedBox(
                 width: 40.0,

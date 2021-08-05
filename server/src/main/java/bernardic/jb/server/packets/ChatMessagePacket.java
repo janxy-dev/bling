@@ -3,16 +3,16 @@ package main.java.bernardic.jb.server.packets;
 import org.json.JSONObject;
 
 public class ChatMessagePacket {
-	private final String userToken;
+	private final String token;
 	private final String groupUUID;
 	private final String message;
-	public ChatMessagePacket(String userToken, String groupUUID, String message) {
-		this.userToken = userToken;
+	public ChatMessagePacket(String token, String groupUUID, String message) {
+		this.token = token;
 		this.groupUUID = groupUUID;
 		this.message = message;
 	}
-	public String getUserToken() {
-		return userToken;
+	public String getToken() {
+		return token;
 	}
 	public String getGroupUUID() {
 		return groupUUID;
@@ -22,6 +22,6 @@ public class ChatMessagePacket {
 	}
 	public static ChatMessagePacket fromJson(String jsonString) {
 		JSONObject json = new JSONObject(jsonString);
-		return new ChatMessagePacket(json.getString("userToken"), json.getString("groupUUID"), json.getString("message"));
+		return new ChatMessagePacket(json.getString("token"), json.getString("groupUUID"), json.getString("message"));
 	}
 }

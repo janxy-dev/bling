@@ -26,14 +26,14 @@ public class Database {
 	    	e.printStackTrace();
 	    }
 	}
-	public void createUsers() {
+	public void createTables() {
 		//Create users table if doesn't exist
 		try(Connection conn = getConnection()){
 			String users = "CREATE TABLE IF NOT EXISTS users ("
 					+ "token UUID PRIMARY KEY, "
 					+ "username VARCHAR(15) NOT NULL UNIQUE, "
 					+ "email VARCHAR(254) NOT NULL UNIQUE, "
-					+ "password CHAR(60) NOT NULL, "
+					+ "password VARCHAR(60) NOT NULL, "
 					+ "groups UUID[]"
 					+ ");";
 			String groups = "CREATE TABLE IF NOT EXISTS groups ("
@@ -41,8 +41,15 @@ public class Database {
 					+ "name VARCHAR(30) NOT NULL, "
 					+ "members UUID[]"
 					+ ");";
+			String messages = "CREATE TABLE IF NOT EXISTS messages ("
+					+ "id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, "
+					+ "seens INT DEFAULT 0, "
+					+ "group_uuid UUID, "
+					+ "message VARCHAR"
+					+ ");";
 			conn.createStatement().executeUpdate(users);
 			conn.createStatement().executeUpdate(groups);
+			conn.createStatement().executeUpdate(messages);
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -166,6 +173,15 @@ public class Database {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	public void addMessage(String groupUUID, String message) {
+		try(Connection conn = getConnection()){
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO messages (group_uuid, message) VALUES ('"+ groupUUID +"',?) ON CONFLICT DO NOTHING;");
+			stmt.setString(1, message);
+			stmt.executeUpdate();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

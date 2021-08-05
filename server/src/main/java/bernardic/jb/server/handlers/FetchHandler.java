@@ -1,4 +1,4 @@
-package main.java.bernardic.jb.server;
+package main.java.bernardic.jb.server.handlers;
 
 import java.util.UUID;
 
@@ -7,6 +7,7 @@ import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.DataListener;
 
+import main.java.bernardic.jb.server.Server;
 import main.java.bernardic.jb.server.models.User;
 import main.java.bernardic.jb.server.views.GroupView;
 import main.java.bernardic.jb.server.views.UserView;

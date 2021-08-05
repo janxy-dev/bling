@@ -62,4 +62,7 @@ class Client{
    static void createGroup(String groupName){
     socket.emit("createGroup", {"token": Client.token, "groupName": groupName}.toString());
    }
+   static void sendMessage(String message, String groupUUID){
+    socket.emit("sendMessage", {"token": Client.token, "groupUUID": groupUUID, "message": message}.toString());
+   }
 }

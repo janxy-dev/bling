@@ -1,4 +1,4 @@
-package main.java.bernardic.jb.server;
+package main.java.bernardic.jb.server.handlers;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,6 +7,8 @@ import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.DataListener;
+
+import main.java.bernardic.jb.server.Server;
 import main.java.bernardic.jb.server.packets.LoginPacket;
 import main.java.bernardic.jb.server.packets.RegisterPacket;
 
