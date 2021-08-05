@@ -1,15 +1,11 @@
 package main.java.bernardic.jb.server;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
-
-import org.json.JSONArray;
 import org.mindrot.jbcrypt.BCrypt;
 
-import main.java.bernardic.jb.server.models.GroupModel;
+import main.java.bernardic.jb.server.models.Group;
+import main.java.bernardic.jb.server.models.User;
 
 public class Database {
 	private final String db_url, db_user, db_pass;
@@ -38,12 +34,12 @@ public class Database {
 					+ "username VARCHAR(15) NOT NULL UNIQUE, "
 					+ "email VARCHAR(254) NOT NULL UNIQUE, "
 					+ "password CHAR(60) NOT NULL, "
-					+ "groups CHAR(36)[]"
+					+ "groups UUID[]"
 					+ ");";
 			String groups = "CREATE TABLE IF NOT EXISTS groups ("
 					+ "group_uuid UUID PRIMARY KEY, "
 					+ "name VARCHAR(30) NOT NULL, "
-					+ "members CHAR(36)[]"
+					+ "members UUID[]"
 					+ ");";
 			conn.createStatement().executeUpdate(users);
 			conn.createStatement().executeUpdate(groups);
@@ -64,14 +60,14 @@ public class Database {
 		}
 		return token.toString();
 	}
-	public User getUser(String token) {
+	public User getUser(UUID token) {
 		try(Connection conn = getConnection()){
 			Statement stmt = conn.createStatement();
 			String sql = "SELECT * FROM users WHERE token='" + token + "';";
 			ResultSet res = stmt.executeQuery(sql);
 			if(res.next()) {
-				List<String> groups = new ArrayList<String>();
-				if(res.getArray(5) != null) groups = new ArrayList<String>(Arrays.asList((String[])res.getArray(5).getArray()));
+				UUID[] groups = null;
+ 				if(res.getArray(5) != null) groups =(UUID[])res.getArray(5).getArray();
 				return new User(token, res.getString(2), res.getString(3), res.getString(4), groups);	
 			}
 		}catch(Exception e) {
@@ -132,41 +128,38 @@ public class Database {
 		}
 		return false;
 	}
-	public void createGroup(GroupModel group) {
+	public Group createGroup(String groupName) {
+		Group group = new Group(UUID.randomUUID(), groupName, new UUID[] {});
 		try(Connection conn = getConnection()){
 			PreparedStatement stmt = conn.prepareStatement("INSERT INTO groups (group_uuid, name) VALUES ('" + group.getGroupUUID() + "',?) ON CONFLICT DO NOTHING;");
-			stmt.setString(1, group.getName());
+			stmt.setString(1, groupName);
 			stmt.executeUpdate();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+		return group;
 	}
-	public void addUserToGroup(User user, GroupModel group) {
+	public void addUserToGroup(User user, Group group) {
 		try(Connection conn = getConnection()){
-			PreparedStatement stmt = conn.prepareStatement("UPDATE groups SET members = ? WHERE groups.group_uuid = '"+ group.getGroupUUID() +"';");
-			group.getMembers().add(user.getToken());
-			stmt.setArray(1, conn.createArrayOf("UUID", group.getMembers().toArray()));
+			PreparedStatement stmt = conn.prepareStatement("UPDATE groups SET members = array_append(?, ?) WHERE groups.group_uuid = '"+ group.getGroupUUID() +"';");
+			stmt.setArray(1, conn.createArrayOf("UUID", group.getMembers()));
+			stmt.setObject(2, user.getToken());
 			stmt.executeUpdate();
-			PreparedStatement stmt2 = conn.prepareStatement("UPDATE users SET groups = ? WHERE users.token = '" + user.getToken() + "';");
-			user.getGroups().add(group.getGroupUUID());
-			System.out.println(user.getGroups());
-			stmt2.setArray(1, conn.createArrayOf("UUID", user.getGroups().toArray()));
+			PreparedStatement stmt2 = conn.prepareStatement("UPDATE users SET groups = array_append(?, ?) WHERE users.token = '" + user.getToken() + "';");
+			stmt2.setArray(1, conn.createArrayOf("UUID", user.getGroups()));
+			stmt2.setObject(2, group.getGroupUUID());
 			stmt2.executeUpdate();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
-	public GroupModel getGroup(String groupId) {
+	public Group getGroup(UUID groupId) {
 		try(Connection conn = getConnection()){
 			Statement stmt = conn.createStatement();
 			String sql = "SELECT * FROM groups WHERE group_uuid='" + groupId + "';";
 			ResultSet res = stmt.executeQuery(sql);
 			if(res.next()) {
-				GroupModel group = new GroupModel();
-				group.setGroupUUID(res.getString(1));
-				group.setName(res.getString(2));
-				group.setMembers((String[])res.getArray(3).getArray());
-				group.setAdmins(new JSONArray(new String[] {group.getMembers().get(0)}));//change later
+				Group group = new Group((UUID)res.getObject(1), res.getString(2), (UUID[])res.getArray(3).getArray());
 				return group;	
 			}
 		}catch(Exception e) {

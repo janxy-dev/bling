@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-class RegisterModel{
+class RegisterPacket{
   final String username;
   final String email;
   final String password;
   final String conPassword;
-  RegisterModel(this.username, this.email, this.password, this.conPassword);
+  RegisterPacket(this.username, this.email, this.password, this.conPassword);
 
   String toJson() => jsonEncode({
     'username': username,

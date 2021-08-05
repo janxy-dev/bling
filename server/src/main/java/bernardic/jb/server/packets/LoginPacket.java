@@ -1,24 +1,22 @@
-package main.java.bernardic.jb.server.models;
+package main.java.bernardic.jb.server.packets;
 
 import org.json.JSONObject;
 
-public class LoginModel {
+public class LoginPacket {
 	private final String username;
 	private final String password;
-	public LoginModel(String username, String password) {
+	public LoginPacket(String username, String password) {
 		this.username = username;
 		this.password = password;
 	}
 	public String getUsername() {
 		return username;
 	}
-
 	public String getPassword() {
 		return password;
 	}
-
-	public static LoginModel fromJson(String jsonString) {
+	public static LoginPacket fromJson(String jsonString) {
 		JSONObject json = new JSONObject(jsonString);
-		return new LoginModel(json.getString("username"), json.getString("password"));
+		return new LoginPacket(json.getString("username"), json.getString("password"));
 	}
 }

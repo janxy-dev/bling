@@ -1,8 +1,8 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'models/group.dart';
-import 'models/login.dart';
-import 'models/register.dart';
+import 'packets/login.dart';
+import 'packets/register.dart';
 
 class Client{
    static late IO.Socket socket;
@@ -44,11 +44,11 @@ class Client{
       });
     }
   }
-   static void login(LoginModel loginModel, {void onSuccess()?, void onError(List<String> err)?}){
+   static void login(LoginPacket loginModel, {void onSuccess()?, void onError(List<String> err)?}){
      socket.emit("login", loginModel.toJson());
      _auth(onSuccess, onError);
    }
-   static void register(RegisterModel registerModel, {void onSuccess()?, void onError(err)?}){
+   static void register(RegisterPacket registerModel, {void onSuccess()?, void onError(err)?}){
     socket.emit("register", registerModel.toJson());
     _auth(onSuccess, onError);
    }
@@ -60,8 +60,6 @@ class Client{
     });
    }
    static void createGroup(String groupName){
-    GroupModel group = GroupModel(<String>[Client.token]);
-    group.name = groupName;
-    socket.emit("createGroup", group);
+    socket.emit("createGroup", {"token": Client.token, "groupName": groupName}.toString());
    }
 }

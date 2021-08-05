@@ -1,21 +1,21 @@
-package main.java.bernardic.jb.server;
+package main.java.bernardic.jb.server.models;
 
-import java.util.List;
+import java.util.UUID;
 
 public class User {
-	private final String token;
+	private final UUID token;
 	private final String username;
 	private final String email;
 	private final String password;
-	private final List<String> groups;
-	public User(String token, String username, String email, String password, List<String> groups) {
+	private final UUID[] groups;
+	public User(UUID token, String username, String email, String password, UUID[] groups) {
 		this.token = token;
 		this.username = username;
 		this.email = email;
 		this.password = password;
 		this.groups = groups;
 	}
-	public String getToken() {
+	public UUID getToken() {
 		return token;
 	}
 	public String getUsername() {
@@ -27,7 +27,7 @@ public class User {
 	public String getPassword() {
 		return password;
 	}
-	public List<String> getGroups() {
+	public UUID[] getGroups() {
 		return groups;
 	}
 }

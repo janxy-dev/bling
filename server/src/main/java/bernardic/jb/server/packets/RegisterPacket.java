@@ -1,13 +1,13 @@
-package main.java.bernardic.jb.server.models;
+package main.java.bernardic.jb.server.packets;
 
 import org.json.JSONObject;
 
-public class RegisterModel {
+public class RegisterPacket {
 	private final String username;
 	private final String email;
 	private final String password;
 	private final String conPassword;
-	public RegisterModel(String username, String email, String password, String conPassword) {
+	public RegisterPacket(String username, String email, String password, String conPassword) {
 		this.username = username;
 		this.email = email;
 		this.password = password;
@@ -29,8 +29,8 @@ public class RegisterModel {
 		return conPassword;
 	}
 
-	public static RegisterModel fromJson(String jsonString) {
+	public static RegisterPacket fromJson(String jsonString) {
 		JSONObject json = new JSONObject(jsonString);
-		return new RegisterModel(json.getString("username"), json.getString("email"), json.getString("password"), json.getString("conPassword"));
+		return new RegisterPacket(json.getString("username"), json.getString("email"), json.getString("password"), json.getString("conPassword"));
 	}
 }

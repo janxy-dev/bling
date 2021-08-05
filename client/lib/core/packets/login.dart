@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-class LoginModel{
+class LoginPacket{
   final String username;
   final String password;
-  LoginModel(this.username, this.password);
+  LoginPacket(this.username, this.password);
 
   String toJson() => jsonEncode({
     'username': username,

@@ -7,9 +7,8 @@ import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.DataListener;
-
-import main.java.bernardic.jb.server.models.LoginModel;
-import main.java.bernardic.jb.server.models.RegisterModel;
+import main.java.bernardic.jb.server.packets.LoginPacket;
+import main.java.bernardic.jb.server.packets.RegisterPacket;
 
 public class AuthHandler {
 	SocketIOServer server;
@@ -24,7 +23,7 @@ public class AuthHandler {
         server.addEventListener("login", String.class, new DataListener<String>() {
 			@Override
 			public void onData(SocketIOClient client, String _data, AckRequest ackSender) throws Exception {
-				LoginModel data = LoginModel.fromJson(_data);
+				LoginPacket data = LoginPacket.fromJson(_data);
 				String username = data.getUsername();
 				String password = data.getPassword();
 				String token = Server.getDatabase().authUser(username, password);
@@ -47,7 +46,7 @@ public class AuthHandler {
         server.addEventListener("register", String.class, new DataListener<String>() {
 			@Override
 			public void onData(SocketIOClient client, String _data, AckRequest ackSender) throws Exception {
-				RegisterModel data = RegisterModel.fromJson(_data);
+				RegisterPacket data = RegisterPacket.fromJson(_data);
 				String username = data.getUsername();
 				String email = data.getEmail();
 				String password = data.getPassword();
