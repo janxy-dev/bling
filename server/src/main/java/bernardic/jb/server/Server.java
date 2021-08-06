@@ -20,8 +20,7 @@ public class Server {
 		
 		Properties dbProps = Configs.get("database");
 		database = new Database(dbProps.getProperty("url"), dbProps.getProperty("user"), dbProps.getProperty("password"));
-		database.testConnection();
-		database.createTables();
+		database.init();
 		
 		Configuration config = new Configuration();
 		config.setHostname("localhost");

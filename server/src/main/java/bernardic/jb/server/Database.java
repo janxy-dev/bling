@@ -15,6 +15,11 @@ public class Database {
 		this.db_user = user;
 		this.db_pass = pass;
 	}
+	public void init() {
+		testConnection();
+		createFunctions();
+		createTables();
+	}
 	public void testConnection() {
 	    try(Connection conn = getConnection()){
 	    	if(conn == null) {
@@ -25,6 +30,27 @@ public class Database {
 	    }catch(SQLException e) {
 	    	e.printStackTrace();
 	    }
+	}
+	public void createFunctions() {
+		try(Connection conn = getConnection()){
+			String inviteCodeFunction = "CREATE OR REPLACE FUNCTION update_invite_code(group_uuid UUID) RETURNS text AS $$" + 
+					"DECLARE" + 
+					"    code text;" + 
+					"    done bool;" + 
+					"BEGIN" + 
+					"    done := false;" + 
+					"    WHILE NOT done LOOP" + 
+					"        code := substring(md5(''||now()::text||random()::text) for 7);" + 
+					"        done := NOT exists(SELECT 1 FROM groups WHERE invite_code=code);" + 
+					"    END LOOP;" + 
+					"    UPDATE groups SET invite_code = code WHERE groups.uuid = group_uuid;" + 
+					"    RETURN code;" + 
+					"END;" + 
+					"$$ LANGUAGE PLPGSQL VOLATILE;";
+	    	conn.createStatement().execute(inviteCodeFunction);
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	public void createTables() {
 		//Create users table if doesn't exist
@@ -37,9 +63,10 @@ public class Database {
 					+ "groups UUID[]"
 					+ ");";
 			String groups = "CREATE TABLE IF NOT EXISTS groups ("
-					+ "group_uuid UUID PRIMARY KEY, "
+					+ "uuid UUID PRIMARY KEY, "
 					+ "name VARCHAR(30) NOT NULL, "
-					+ "members UUID[]"
+					+ "members UUID[], "
+					+ "invite_code CHAR(7)"
 					+ ");";
 			String messages = "CREATE TABLE IF NOT EXISTS messages ("
 					+ "id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, "
@@ -138,9 +165,10 @@ public class Database {
 	public Group createGroup(String groupName) {
 		Group group = new Group(UUID.randomUUID(), groupName, new UUID[] {});
 		try(Connection conn = getConnection()){
-			PreparedStatement stmt = conn.prepareStatement("INSERT INTO groups (group_uuid, name) VALUES ('" + group.getGroupUUID() + "',?) ON CONFLICT DO NOTHING;");
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO groups (uuid, name) VALUES ('" + group.getGroupUUID() + "',?) ON CONFLICT DO NOTHING;");
 			stmt.setString(1, groupName);
 			stmt.executeUpdate();
+			conn.createStatement().execute("SELECT update_invite_code('"+ group.getGroupUUID() +"');");
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -148,7 +176,7 @@ public class Database {
 	}
 	public void addUserToGroup(User user, Group group) {
 		try(Connection conn = getConnection()){
-			PreparedStatement stmt = conn.prepareStatement("UPDATE groups SET members = array_append(?, ?) WHERE groups.group_uuid = '"+ group.getGroupUUID() +"';");
+			PreparedStatement stmt = conn.prepareStatement("UPDATE groups SET members = array_append(?, ?) WHERE groups.uuid = '"+ group.getGroupUUID() +"';");
 			stmt.setArray(1, conn.createArrayOf("UUID", group.getMembers()));
 			stmt.setObject(2, user.getToken());
 			stmt.executeUpdate();
@@ -163,7 +191,7 @@ public class Database {
 	public Group getGroup(UUID groupId) {
 		try(Connection conn = getConnection()){
 			Statement stmt = conn.createStatement();
-			String sql = "SELECT * FROM groups WHERE group_uuid='" + groupId + "';";
+			String sql = "SELECT * FROM groups WHERE uuid='" + groupId + "';";
 			ResultSet res = stmt.executeQuery(sql);
 			if(res.next()) {
 				Group group = new Group((UUID)res.getObject(1), res.getString(2), (UUID[])res.getArray(3).getArray());
