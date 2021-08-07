@@ -66,7 +66,7 @@ public class Database {
 					+ "uuid UUID PRIMARY KEY, "
 					+ "name VARCHAR(30) NOT NULL, "
 					+ "members UUID[], "
-					+ "invite_code CHAR(7)"
+					+ "invite_code CHAR(7) UNIQUE"
 					+ ");";
 			String messages = "CREATE TABLE IF NOT EXISTS messages ("
 					+ "id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, "
@@ -193,8 +193,26 @@ public class Database {
 			Statement stmt = conn.createStatement();
 			String sql = "SELECT * FROM groups WHERE uuid='" + groupId + "';";
 			ResultSet res = stmt.executeQuery(sql);
+			UUID[] members = null;
 			if(res.next()) {
-				Group group = new Group((UUID)res.getObject(1), res.getString(2), (UUID[])res.getArray(3).getArray());
+				if(res.getArray(3) != null) members = (UUID[])res.getArray(3).getArray();
+				Group group = new Group((UUID)res.getObject(1), res.getString(2), members);
+				return group;	
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public Group getGroup(String inviteCode) {
+		try(Connection conn = getConnection()){
+			Statement stmt = conn.createStatement();
+			String sql = "SELECT * FROM groups WHERE invite_code='" + inviteCode + "';";
+			ResultSet res = stmt.executeQuery(sql);
+			UUID[] members = null;
+			if(res.next()) {
+				if(res.getArray(3) != null) members = (UUID[])res.getArray(3).getArray();
+				Group group = new Group((UUID)res.getObject(1), res.getString(2), members);
 				return group;	
 			}
 		}catch(Exception e) {

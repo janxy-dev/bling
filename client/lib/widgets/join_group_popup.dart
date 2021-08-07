@@ -1,3 +1,4 @@
+import 'package:bling/core/client.dart';
 import 'package:flutter/material.dart';
 
 dynamic showJoinGroupPopup(BuildContext context){
@@ -13,7 +14,8 @@ dynamic showJoinGroupPopup(BuildContext context){
           Text("Enter code"),
           TextField(
             autocorrect: false,
-            onSubmitted: (code){
+            onSubmitted: (String code){
+              Client.joinGroup(code);
               Navigator.pop(context);
               Navigator.pop(context);
             },

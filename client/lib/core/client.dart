@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'models/group.dart';
@@ -44,12 +46,12 @@ class Client{
       });
     }
   }
-   static void login(LoginPacket loginModel, {void onSuccess()?, void onError(List<String> err)?}){
-     socket.emit("login", loginModel.toJson());
+   static void login(LoginPacket login, {void onSuccess()?, void onError(List<String> err)?}){
+     socket.emit("login", login.toJson());
      _auth(onSuccess, onError);
    }
-   static void register(RegisterPacket registerModel, {void onSuccess()?, void onError(err)?}){
-    socket.emit("register", registerModel.toJson());
+   static void register(RegisterPacket register, {void onSuccess()?, void onError(err)?}){
+    socket.emit("register", register.toJson());
     _auth(onSuccess, onError);
    }
    static void fetch(String event, void onData(json)){
@@ -60,9 +62,12 @@ class Client{
     });
    }
    static void createGroup(String groupName){
-    socket.emit("createGroup", {"token": Client.token, "groupName": groupName}.toString());
+    socket.emit("createGroup", jsonEncode({"token": Client.token, "groupName": groupName}));
    }
    static void sendMessage(String message, String groupUUID){
-    socket.emit("sendMessage", {"token": Client.token, "groupUUID": groupUUID, "message": message}.toString());
+    socket.emit("sendMessage", jsonEncode({"token": Client.token, "groupUUID": groupUUID, "message": message}));
+   }
+   static void joinGroup(String inviteCode){
+    socket.emit("joinGroup", jsonEncode({"token": Client.token, "inviteCode": inviteCode}));
    }
 }

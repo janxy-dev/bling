@@ -22,9 +22,10 @@ public class GroupHandler {
 	
 	public void init() {
 		handleGroupCreate();
+		handleGroupJoin();
 	}
 	
-	public void handleGroupCreate() {
+	private void handleGroupCreate() {
 		server.addEventListener("createGroup", String.class, new DataListener<String>() {
 			@Override
 			public void onData(SocketIOClient client, String data, AckRequest ackSender) throws Exception {
@@ -33,6 +34,21 @@ public class GroupHandler {
 				String groupName = json.getString("groupName");
 				if(!Server.getDatabase().validateToken(token)) return;
 				Group group = Server.getDatabase().createGroup(groupName);
+				Server.getDatabase().addUserToGroup(db.getUser(UUID.fromString(token)), group);
+				client.sendEvent("createGroup", group.getGroupUUID());
+			}
+		});
+	}
+	private void handleGroupJoin() {
+		server.addEventListener("joinGroup", String.class, new DataListener<String>() {
+			@Override
+			public void onData(SocketIOClient client, String data, AckRequest ackSender) throws Exception {
+				JSONObject json = new JSONObject(data);
+				String token = json.getString("token");
+				String inviteCode = json.getString("inviteCode");
+				System.out.println(inviteCode);
+				if(!Server.getDatabase().validateToken(token)) return;
+				Group group = Server.getDatabase().getGroup(inviteCode);
 				Server.getDatabase().addUserToGroup(db.getUser(UUID.fromString(token)), group);
 				client.sendEvent("createGroup", group.getGroupUUID());
 			}
