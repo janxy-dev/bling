@@ -37,7 +37,7 @@ public class GroupHandler {
 				Group group = Server.getDatabase().createGroup(groupName);
 				Server.getDatabase().addUserToGroup(db.getUser(UUID.fromString(token)), group);
 				client.joinRoom(group.getGroupUUID().toString());
-				client.sendEvent("message", new ChatMessageView(group.getGroupUUID(), "You created group '"+ group.getName() + "'", ""));
+				client.sendEvent("message", new ChatMessageView(group.getGroupUUID(), "You created group \""+ group.getName() + "\"", ""));
 			}
 		});
 	}

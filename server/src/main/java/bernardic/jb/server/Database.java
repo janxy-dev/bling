@@ -2,10 +2,14 @@ package main.java.bernardic.jb.server;
 
 import java.sql.*;
 import java.util.UUID;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
 
 import main.java.bernardic.jb.server.models.Group;
 import main.java.bernardic.jb.server.models.User;
+import main.java.bernardic.jb.server.views.ChatMessageView;
 
 public class Database {
 	private final String db_url, db_user, db_pass;
@@ -60,7 +64,8 @@ public class Database {
 					+ "username VARCHAR(15) NOT NULL UNIQUE, "
 					+ "email VARCHAR(254) NOT NULL UNIQUE, "
 					+ "password VARCHAR(60) NOT NULL, "
-					+ "groups UUID[]"
+					+ "groups UUID[], "
+					+ "messages JSONB DEFAULT '[]'::jsonb"
 					+ ");";
 			String groups = "CREATE TABLE IF NOT EXISTS groups ("
 					+ "uuid UUID PRIMARY KEY, "
@@ -68,15 +73,8 @@ public class Database {
 					+ "members UUID[], "
 					+ "invite_code CHAR(7) UNIQUE"
 					+ ");";
-			String messages = "CREATE TABLE IF NOT EXISTS messages ("
-					+ "id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, "
-					+ "seens INT DEFAULT 0, "
-					+ "group_uuid UUID, "
-					+ "message VARCHAR"
-					+ ");";
 			conn.createStatement().executeUpdate(users);
 			conn.createStatement().executeUpdate(groups);
-			conn.createStatement().executeUpdate(messages);
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -102,7 +100,7 @@ public class Database {
 			if(res.next()) {
 				UUID[] groups = null;
  				if(res.getArray(5) != null) groups =(UUID[])res.getArray(5).getArray();
-				return new User(token, res.getString(2), res.getString(3), res.getString(4), groups);	
+				return new User(token, res.getString(2), res.getString(3), res.getString(4), groups, new JSONArray(res.getString(6)));	
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -163,13 +161,11 @@ public class Database {
 	}
 	public void addUserToGroup(User user, Group group) {
 		try(Connection conn = getConnection()){
-			PreparedStatement stmt = conn.prepareStatement("UPDATE groups SET members = array_append(?, ?) WHERE groups.uuid = '"+ group.getGroupUUID() +"';");
-			stmt.setArray(1, conn.createArrayOf("UUID", group.getMembers()));
-			stmt.setObject(2, user.getToken());
+			PreparedStatement stmt = conn.prepareStatement("UPDATE groups SET members = array_append(members, ?) WHERE groups.uuid = '"+ group.getGroupUUID() +"';");
+			stmt.setObject(1, user.getToken());
 			stmt.executeUpdate();
-			PreparedStatement stmt2 = conn.prepareStatement("UPDATE users SET groups = array_append(?, ?) WHERE users.token = '" + user.getToken() + "';");
-			stmt2.setArray(1, conn.createArrayOf("UUID", user.getGroups()));
-			stmt2.setObject(2, group.getGroupUUID());
+			PreparedStatement stmt2 = conn.prepareStatement("UPDATE users SET groups = array_append(groups, ?) WHERE users.token = '" + user.getToken() + "';");
+			stmt2.setObject(1, group.getGroupUUID());
 			stmt2.executeUpdate();
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -207,10 +203,10 @@ public class Database {
 		}
 		return null;
 	}
-	public void addMessage(String groupUUID, String message) {
+	public void addMessage(UUID recieverToken, UUID groupUUID, String message, String senderUsername) {
 		try(Connection conn = getConnection()){
-			PreparedStatement stmt = conn.prepareStatement("INSERT INTO messages (group_uuid, message) VALUES ('"+ groupUUID +"',?) ON CONFLICT DO NOTHING;");
-			stmt.setString(1, message);
+			PreparedStatement stmt = conn.prepareStatement("UPDATE users SET messages = messages || ?::jsonb WHERE users.token = '"+ recieverToken +"';");
+			stmt.setString(1, new JSONObject(new ChatMessageView(groupUUID, message, senderUsername)).toString());
 			stmt.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();

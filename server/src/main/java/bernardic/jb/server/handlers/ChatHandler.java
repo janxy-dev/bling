@@ -33,7 +33,10 @@ public class ChatHandler {
 					User user = db.getUser(UUID.fromString(packet.getToken()));
 					if(user == null) return;
 					Group group = db.getGroup(UUID.fromString(packet.getGroupUUID()));
-					db.addMessage(group.getGroupUUID().toString(), packet.getMessage());
+					if(group == null) return;
+					for(int i = 0; i<group.getMembers().length; i++) {
+						db.addMessage(group.getMembers()[i], group.getGroupUUID(), packet.getMessage(), user.getUsername());
+					}
 					ChatMessageView msg = new ChatMessageView(group.getGroupUUID(), packet.getMessage(), user.getUsername());
 					server.getRoomOperations(packet.getGroupUUID()).sendEvent("message", msg);
 				}catch(Exception e) {

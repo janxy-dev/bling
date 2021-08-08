@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+import 'models/user.dart';
 import 'packets/login.dart';
 import 'packets/register.dart';
 
 class Client{
    static late IO.Socket socket;
+   static late LocalUserModel user;
    static String token = "";
    static bool isAuthenticating = false;
   static void connect(){
@@ -29,7 +31,10 @@ class Client{
         if(Client.token.isNotEmpty){
           isAuthenticating = false;
           if(Client.token[0] != '*'){
-            if(onSuccess != null) onSuccess();
+            Client.fetch("fetchLocalUser", onData: (json){
+              Client.user = LocalUserModel.fromJson(json);
+              if(onSuccess != null) onSuccess();
+            });
             return false;
           }
           String err = Client.token.substring(1);
@@ -58,7 +63,6 @@ class Client{
     }else socket.emit(event, jsonEncode({"token": token, "args": args}));
      socket.on(event, (data){
        onData(data);
-       socket.off(event, onData);
      });
    }
    static void createGroup(String groupName){
@@ -69,10 +73,5 @@ class Client{
    }
    static void joinGroup(String inviteCode){
     socket.emit("joinGroup", jsonEncode({"token": Client.token, "inviteCode": inviteCode}));
-   }
-   static void onMessage(void onMessage(Map<String, dynamic> json)){
-    socket.on("message", (data){
-      onMessage(data);
-    });
    }
 }

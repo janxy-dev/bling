@@ -13,8 +13,7 @@ import main.java.bernardic.jb.server.Server;
 import main.java.bernardic.jb.server.models.Group;
 import main.java.bernardic.jb.server.models.User;
 import main.java.bernardic.jb.server.views.GroupView;
-import main.java.bernardic.jb.server.views.UserView;
-
+import main.java.bernardic.jb.server.views.LocalUserView;
 public class FetchHandler {
 	final SocketIOServer server;
 	public FetchHandler(SocketIOServer server) {
@@ -29,8 +28,12 @@ public class FetchHandler {
 		server.addEventListener("fetchLocalUser", String.class, new DataListener<String>() {
 			@Override
 			public void onData(SocketIOClient client, String token, AckRequest ackSender) throws Exception {
-				User user = Server.getDatabase().getUser(UUID.fromString(token));
-				client.sendEvent("fetchLocalUser", new UserView(user));
+				try {
+					User user = Server.getDatabase().getUser(UUID.fromString(token));
+					client.sendEvent("fetchLocalUser", new LocalUserView(user));	
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}

@@ -40,7 +40,7 @@ class _ChatState extends State<Chat> {
     ),
   );
 
-  Widget messageBuilder(MessageModel message){
+  Widget messageBuilder(MessageModel message, bool isClients){
     Widget avatar = CircleAvatar(backgroundImage: NetworkImage("https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"), radius: 20.0);
     if(message.sender.isEmpty) avatar = SizedBox();
     return Container(
@@ -50,21 +50,21 @@ class _ChatState extends State<Chat> {
           Padding(
             padding: EdgeInsets.only(left: 10.0, right: 10.0),
             child: Row(
-              mainAxisAlignment: message.isClients ? MainAxisAlignment.end : MainAxisAlignment.start,
+              mainAxisAlignment: isClients ? MainAxisAlignment.end : MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                message.isClients ? SizedBox() : avatar,
+                isClients ? SizedBox() : avatar,
                 Container(
-                  child: Text(message.message, style: TextStyle(color: message.isClients ? Colors.white : Colors.black)),
+                  child: Text(message.message, style: TextStyle(color: isClients ? Colors.white : Colors.black)),
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.of(context).size.width/2+20,
                   ),
                   margin: EdgeInsets.only(left: 7.0, right: 7.0, top: 5.0),
                   padding: EdgeInsets.all(6.0),
-                  decoration: BoxDecoration(color: message.isClients ? Colors.blue : Colors.white, borderRadius: BorderRadius.circular(10.0)),
+                  decoration: BoxDecoration(color: isClients ? Colors.blue : Colors.white, borderRadius: BorderRadius.circular(10.0)),
 
                 ),
-                message.isClients ? avatar : SizedBox()
+                isClients ? avatar : SizedBox()
               ],
             ),
           )
@@ -76,7 +76,7 @@ class _ChatState extends State<Chat> {
   @override
   void initState() {
     super.initState();
-    Client.onMessage((json) {
+    Client.socket.on("message", (json) {
       if(this.mounted){
         setState(() {}); //update state on message
       }
@@ -95,7 +95,7 @@ class _ChatState extends State<Chat> {
             child: ListView(
               reverse: true,
               padding: EdgeInsets.only(bottom: 10.0),
-              children: widget.group.messages.map((e) => messageBuilder(e)).toList().reversed.toList(),
+              children: widget.group.messages.map((e) => messageBuilder(e, false)).toList().reversed.toList(),
             ),
           ),
           //Input field
