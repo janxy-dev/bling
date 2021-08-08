@@ -2,25 +2,31 @@ import 'dart:convert';
 
 import 'package:bling/core/client.dart';
 import 'package:bling/core/models/group.dart';
+import 'package:bling/core/models/message.dart';
 import 'package:bling/widgets/chat_banner.dart';
 import 'package:flutter/material.dart';
 
 class ChatsPage extends StatefulWidget {
+  final Map<String, GroupModel> groups;
+  ChatsPage(this.groups);
   @override
   _ChatsPageState createState() => _ChatsPageState();
 }
 
 class _ChatsPageState extends State<ChatsPage> {
-  List<GroupModel> groups = <GroupModel>[];
   void fetchGroups(){
-    Client.fetch("fetchGroups", (json) {
+    Client.fetch("fetchAllGroups", onData: (json) {
       if(this.mounted && json != null){
         setState(() {
           //Group isn't sent in a list if there is only 1 group
-          if(json[0] == null) groups = [GroupModel.fromJson(json)];
+          if(json[0] == null){
+            GroupModel model = GroupModel.fromJson(json);
+            widget.groups.putIfAbsent(model.groupUUID, () => model);
+          }
           else{
             for(int i = 0; i<json.length; i++){
-              groups.add(GroupModel.fromJson(json[i]));
+              GroupModel model = GroupModel.fromJson(json[i]);
+              widget.groups.putIfAbsent(model.groupUUID, () => model);
             }
           }
         });
@@ -30,7 +36,25 @@ class _ChatsPageState extends State<ChatsPage> {
   @override
   void initState() {
     super.initState();
-    fetchGroups();
+    Client.socket.off("message"); //remove message listeners from prev opened chats
+    Client.onMessage((json) {
+      if(this.mounted){
+        setState(() {
+          if(widget.groups[json["groupUUID"]] == null){ // fetch group if doesn't exist
+            Client.fetch("fetchGroup", args: [json["groupUUID"]], onData: (data){
+              GroupModel group = GroupModel.fromJson(data);
+              group.messages.add(MessageModel.fromJson(json));
+              widget.groups.putIfAbsent(data["groupUUID"], () => group);
+              setState(() {}); //refresh
+            });
+          }
+          else widget.groups[json["groupUUID"]]?.messages.add(MessageModel.fromJson(json));
+        });
+      }
+    });
+    if(widget.groups.isEmpty){ //fetch groups only once
+      fetchGroups();
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -38,7 +62,7 @@ class _ChatsPageState extends State<ChatsPage> {
       children: [
         Divider(),
         Column(
-          children: [...groups.map((e) => ChatBanner(e))],
+          children: [...widget.groups.values.map((e) => ChatBanner(e))].reversed.toList(),
         )
       ],
     );

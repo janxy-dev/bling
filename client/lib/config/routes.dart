@@ -34,6 +34,8 @@ class Routes{
     });
     _isListenerAdded = true;
   }
+
+  static Map<String, GroupModel> _groups = {};
   static Route<dynamic> generateRoute(RouteSettings settings){
     switch(settings.name){
       case '/':
@@ -67,7 +69,7 @@ class Routes{
                               controller: pageCtrl,
                               children: [
                                 CallsPage(),
-                                ChatsPage(),
+                                ChatsPage(_groups),
                                 ProfilePage()
                               ],
                             ),

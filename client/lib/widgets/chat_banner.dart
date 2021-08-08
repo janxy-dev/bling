@@ -36,7 +36,7 @@ class _ChatBannerState extends State<ChatBanner> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(widget.group.name, style: TextStyle(fontSize: 14)),
-                      Text("Lorem ipsum dolor sit amet...", style: TextStyle(fontSize: 12))
+                      Text(widget.group.messages.isNotEmpty ? widget.group.messages.last.message : "", style: TextStyle(fontSize: 12))
                     ],
                   ),
                 )

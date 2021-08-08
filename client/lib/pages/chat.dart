@@ -1,5 +1,6 @@
 import 'package:bling/core/client.dart';
 import 'package:bling/core/models/group.dart';
+import 'package:bling/core/models/message.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -9,14 +10,6 @@ class Chat extends StatefulWidget {
 
   @override
   _ChatState createState() => _ChatState();
-}
-
-class Message{
-  int time;
-  String text;
-  String author;
-  bool isClients;
-  Message(this.text, this.author, this.time, this.isClients);
 }
 
 class _ChatState extends State<Chat> {
@@ -47,7 +40,9 @@ class _ChatState extends State<Chat> {
     ),
   );
 
-  Widget messageBuilder(Message message){
+  Widget messageBuilder(MessageModel message){
+    Widget avatar = CircleAvatar(backgroundImage: NetworkImage("https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"), radius: 20.0);
+    if(message.sender.isEmpty) avatar = SizedBox();
     return Container(
       padding: EdgeInsets.only(top: 10.0),
       child: Column(
@@ -58,9 +53,9 @@ class _ChatState extends State<Chat> {
               mainAxisAlignment: message.isClients ? MainAxisAlignment.end : MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                message.isClients ? SizedBox() : CircleAvatar(backgroundImage: NetworkImage("https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"), radius: 20.0),
+                message.isClients ? SizedBox() : avatar,
                 Container(
-                  child: Text(message.text, style: TextStyle(color: message.isClients ? Colors.white : Colors.black)),
+                  child: Text(message.message, style: TextStyle(color: message.isClients ? Colors.white : Colors.black)),
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.of(context).size.width/2+20,
                   ),
@@ -69,7 +64,7 @@ class _ChatState extends State<Chat> {
                   decoration: BoxDecoration(color: message.isClients ? Colors.blue : Colors.white, borderRadius: BorderRadius.circular(10.0)),
 
                 ),
-                message.isClients ? CircleAvatar(backgroundImage: NetworkImage("https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"), radius: 20.0) : SizedBox()
+                message.isClients ? avatar : SizedBox()
               ],
             ),
           )
@@ -78,6 +73,15 @@ class _ChatState extends State<Chat> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    Client.onMessage((json) {
+      if(this.mounted){
+        setState(() {}); //update state on message
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,26 +95,7 @@ class _ChatState extends State<Chat> {
             child: ListView(
               reverse: true,
               padding: EdgeInsets.only(bottom: 10.0),
-              children: [
-                messageBuilder(new Message("aLorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, true)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-                messageBuilder(new Message("Lorem ipsum dolor sit amet", "johndoe", 10, false)),
-              ].reversed.toList(),
+              children: widget.group.messages.map((e) => messageBuilder(e)).toList().reversed.toList(),
             ),
           ),
           //Input field
@@ -124,6 +109,7 @@ class _ChatState extends State<Chat> {
                 width: 35.0,
                 child: IconButton(onPressed: (){
                   Client.sendMessage(textCtrl.text, widget.group.groupUUID);
+                  textCtrl.clear();
                 }, icon: Icon(Icons.send)),
               ),
               SizedBox(

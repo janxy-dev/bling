@@ -12,6 +12,8 @@ import com.corundumstudio.socketio.listener.DataListener;
 import main.java.bernardic.jb.server.Database;
 import main.java.bernardic.jb.server.Server;
 import main.java.bernardic.jb.server.models.Group;
+import main.java.bernardic.jb.server.models.User;
+import main.java.bernardic.jb.server.views.ChatMessageView;
 
 public class GroupHandler {
 	private SocketIOServer server;
@@ -24,7 +26,6 @@ public class GroupHandler {
 		handleGroupCreate();
 		handleGroupJoin();
 	}
-	
 	private void handleGroupCreate() {
 		server.addEventListener("createGroup", String.class, new DataListener<String>() {
 			@Override
@@ -32,10 +33,11 @@ public class GroupHandler {
 				JSONObject json = new JSONObject(data);
 				String token = json.getString("token");
 				String groupName = json.getString("groupName");
-				if(!Server.getDatabase().validateToken(token)) return;
+				if(Server.getDatabase().getUser(UUID.fromString(token)) == null) return;
 				Group group = Server.getDatabase().createGroup(groupName);
 				Server.getDatabase().addUserToGroup(db.getUser(UUID.fromString(token)), group);
-				client.sendEvent("createGroup", group.getGroupUUID());
+				client.joinRoom(group.getGroupUUID().toString());
+				client.sendEvent("message", new ChatMessageView(group.getGroupUUID(), "You created group '"+ group.getName() + "'", ""));
 			}
 		});
 	}
@@ -46,11 +48,12 @@ public class GroupHandler {
 				JSONObject json = new JSONObject(data);
 				String token = json.getString("token");
 				String inviteCode = json.getString("inviteCode");
-				System.out.println(inviteCode);
-				if(!Server.getDatabase().validateToken(token)) return;
+				User user = Server.getDatabase().getUser(UUID.fromString(token)); 
+				if(user == null) return;
 				Group group = Server.getDatabase().getGroup(inviteCode);
 				Server.getDatabase().addUserToGroup(db.getUser(UUID.fromString(token)), group);
-				client.sendEvent("createGroup", group.getGroupUUID());
+				client.joinRoom(group.getGroupUUID().toString());
+				server.getRoomOperations(group.getGroupUUID().toString()).sendEvent("message", new ChatMessageView(group.getGroupUUID(), user.getUsername() + " has joined.", ""));
 			}
 		});
 	}

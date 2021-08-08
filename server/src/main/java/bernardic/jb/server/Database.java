@@ -149,19 +149,6 @@ public class Database {
 		}
 		return false;
 	}
-	public boolean validateToken(String token) {
-		try(Connection conn = getConnection()){
-			Statement stmt = conn.createStatement();
-			String sql = "SELECT EXISTS(SELECT 1 FROM users WHERE token='"+token+"')";
-			ResultSet res = stmt.executeQuery(sql);
-			if(res.next()) {
-				return res.getBoolean(1);
-			}
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
 	public Group createGroup(String groupName) {
 		Group group = new Group(UUID.randomUUID(), groupName, new UUID[] {});
 		try(Connection conn = getConnection()){

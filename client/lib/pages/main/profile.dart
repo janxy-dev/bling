@@ -12,7 +12,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    Client.fetch("fetchLocalUser", (json) {
+    Client.fetch("fetchLocalUser", onData: (json) {
       if(this.mounted){
         setState(() {
           user = UserModel.fromJson(json);
