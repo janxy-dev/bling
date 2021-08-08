@@ -29,38 +29,35 @@ class _ChatsPageState extends State<ChatsPage> {
               widget.groups.putIfAbsent(model.groupUUID, () => model);
             }
           }
-          _fetchMessages();
+          //add messages to groups
+          List<MessageModel> msgs = Client.user.messages;
+          for(int i = 0; i<msgs.length; i++){
+            widget.groups[msgs[i].groupUUID]?.messages.add(msgs[i]);
+          }
         });
       }
     });
-  }
-  void _fetchMessages(){
-    List<MessageModel> msgs = Client.user.messages;
-    for(int i = 0; i<msgs.length; i++){
-      widget.groups[msgs[i].groupUUID]?.messages.add(msgs[i]);
-    }
   }
   @override
   void initState() {
     super.initState();
-    Client.socket.off("message"); //remove message listeners from prev opened chats
-    Client.socket.on("message", (json) {
-      if(this.mounted){
-        setState(() {
-          if(widget.groups[json["groupUUID"]] == null){ // fetch group if doesn't exist
-            Client.fetch("fetchGroup", args: [json["groupUUID"]], onData: (data){
-              GroupModel group = GroupModel.fromJson(data);
-              group.messages.add(MessageModel.fromJson(json));
-              widget.groups.putIfAbsent(data["groupUUID"], () => group);
-              setState(() {}); //refresh
-            });
-          }
-          else widget.groups[json["groupUUID"]]?.messages.add(MessageModel.fromJson(json));
-        });
-      }
-    });
-    if(widget.groups.isEmpty){ //fetch groups only once
+    if(widget.groups.isEmpty){
       _fetchGroups();
+      Client.socket.on("message", (json) {
+        if(this.mounted){
+          setState(() {
+            if(widget.groups[json["groupUUID"]] == null){ // fetch group if doesn't exist
+              Client.fetch("fetchGroup", args: [json["groupUUID"]], onData: (data){
+                GroupModel group = GroupModel.fromJson(data);
+                group.messages.add(MessageModel.fromJson(json));
+                widget.groups.putIfAbsent(data["groupUUID"], () => group);
+                setState(() {}); //refresh
+              });
+            }
+            else widget.groups[json["groupUUID"]]?.messages.add(MessageModel.fromJson(json));
+          });
+        }
+      });
     }
   }
   @override

@@ -73,14 +73,20 @@ class _ChatState extends State<Chat> {
     );
   }
 
+  void _onMsg(json){
+    if(this.mounted){
+      setState(() {}); //update state on message
+    }
+  }
   @override
   void initState() {
     super.initState();
-    Client.socket.on("message", (json) {
-      if(this.mounted){
-        setState(() {}); //update state on message
-      }
-    });
+    Client.socket.on("message", _onMsg);
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    Client.socket.off("message", _onMsg);
   }
   @override
   Widget build(BuildContext context) {

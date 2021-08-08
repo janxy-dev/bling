@@ -61,7 +61,7 @@ class Client{
     if(args == null){
       socket.emit(event, token);
     }else socket.emit(event, jsonEncode({"token": token, "args": args}));
-     socket.on(event, (data){
+     socket.once(event, (data){
        onData(data);
      });
    }
