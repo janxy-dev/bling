@@ -212,5 +212,12 @@ public class Database {
 			e.printStackTrace();
 		}
 	}
+	public void deleteMessages(User user) {
+		try(Connection conn = getConnection()){
+			conn.createStatement().executeUpdate("UPDATE users SET messages = '[]'::jsonb WHERE users.token = '"+ user.getToken() +"';");
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

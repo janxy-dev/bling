@@ -29,6 +29,8 @@ public class FetchHandler {
 			try {
 				User user = Server.getDatabase().getUser(UUID.fromString(data));
 				ackSender.sendAckData(new LocalUserView(user));
+				//delete msgs from server after fetch
+				Server.getDatabase().deleteMessages(user);
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
