@@ -10,7 +10,6 @@ class Client{
    static late IO.Socket socket;
    static late LocalUserModel user;
    static String token = "";
-   static bool isAuthenticating = false;
   static void connect(){
      socket = IO.io("http://10.0.2.2:5000", <String, dynamic>{
        "transports": ["websocket"],
@@ -24,46 +23,36 @@ class Client{
        Client.token = token;
      });
   }
-  static void _auth(void onSuccess()?, void onError(List<String> err)?){
-    if(!isAuthenticating){
-      isAuthenticating = true;
-      Future.doWhile(() async {
-        if(Client.token.isNotEmpty){
-          isAuthenticating = false;
-          if(Client.token[0] != '*'){
-            Client.fetch("fetchLocalUser", onData: (json){
-              Client.user = LocalUserModel.fromJson(json);
-              if(onSuccess != null) onSuccess();
-            });
-            return false;
-          }
-          String err = Client.token.substring(1);
-          List<String> errors = err.split("\n");
-          errors.removeLast();
-          if(onError != null) onError(errors);
-          Client.token = "";
-          return false;
-        }
-        await Future.delayed(Duration(milliseconds: 20));
-        return true;
-      });
+  static void _auth(response, void onSuccess()?, void onError(List<String> err)?){
+    if(response["ok"]){
+      Client.token = response["token"];
+      if(onSuccess != null){
+        Client.fetch("fetchLocalUser", onData: (json){
+          Client.user = LocalUserModel.fromJson(json);
+        });
+        onSuccess();
+      }
+      return;
+    } else{
+      if(onError != null){
+        onError(response["errors"].cast<String>());
+      }
     }
   }
    static void login(LoginPacket login, {void onSuccess()?, void onError(List<String> err)?}){
-     socket.emit("login", login.toJson());
-     _auth(onSuccess, onError);
+     socket.emitWithAck("login", login.toJson(), ack: (json){
+       _auth(json, onSuccess, onError);
+     });
    }
-   static void register(RegisterPacket register, {void onSuccess()?, void onError(err)?}){
-    socket.emit("register", register.toJson());
-    _auth(onSuccess, onError);
+   static void register(RegisterPacket register, {void onSuccess()?, void onError(List<String> err)?}){
+    socket.emitWithAck("register", register.toJson(), ack:(json){
+      _auth(json, onSuccess, onError);
+    });
    }
    static void fetch(String event, {required void onData(json), List<dynamic>? args}){
     if(args == null){
-      socket.emit(event, token);
-    }else socket.emit(event, jsonEncode({"token": token, "args": args}));
-     socket.once(event, (data){
-       onData(data);
-     });
+      socket.emitWithAck(event, token, ack: onData);
+    }else socket.emitWithAck(event, jsonEncode({"token": token, "args": args}), ack: onData);
    }
    static void createGroup(String groupName){
     socket.emit("createGroup", jsonEncode({"token": Client.token, "groupName": groupName}));

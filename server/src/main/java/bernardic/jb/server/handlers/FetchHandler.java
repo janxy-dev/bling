@@ -25,15 +25,12 @@ public class FetchHandler {
 		fetchGroup();
 	}
 	private void fetchLocalUser() {
-		server.addEventListener("fetchLocalUser", String.class, new DataListener<String>() {
-			@Override
-			public void onData(SocketIOClient client, String token, AckRequest ackSender) throws Exception {
-				try {
-					User user = Server.getDatabase().getUser(UUID.fromString(token));
-					client.sendEvent("fetchLocalUser", new LocalUserView(user));	
-				}catch(Exception e) {
-					e.printStackTrace();
-				}
+		server.addEventListener("fetchLocalUser", String.class, (client, data, ackSender) -> {
+			try {
+				User user = Server.getDatabase().getUser(UUID.fromString(data));
+				ackSender.sendAckData(new LocalUserView(user));
+			}catch(Exception e) {
+				e.printStackTrace();
 			}
 		});
 	}
@@ -49,7 +46,7 @@ public class FetchHandler {
 					groups[i] = new GroupView(Server.getDatabase().getGroup(group_ids[i]));
 					client.joinRoom(group_ids[i].toString());
 				}
-				client.sendEvent("fetchAllGroups", (Object[])groups);
+				ackSender.sendAckData((Object[])groups);
 			}
 		});
 	}
@@ -63,7 +60,7 @@ public class FetchHandler {
 					if(user == null) return;
 					String groupUUID = json.getJSONArray("args").getString(0);
 					Group group = Server.getDatabase().getGroup(UUID.fromString(groupUUID));
-					client.sendEvent("fetchGroup", new GroupView(group));	
+					ackSender.sendAckData(new GroupView(group));
 				}catch(Exception e) {
 					e.printStackTrace();
 				}
