@@ -44,8 +44,6 @@ public class ChatHandler {
 						protected void onClientSuccess(SocketIOClient client, String result) {
 							super.onClientSuccess(client, result);
 							//if msg delivered delete
-							System.out.println(client);
-							System.out.println(result);
 							User user = db.getUser(UUID.fromString(result));
 							db.deleteMessages(user);
 						}

@@ -56,7 +56,13 @@ class _ChatState extends State<Chat> {
               children: [
                 isClients ? SizedBox() : avatar,
                 Container(
-                  child: Text(message.message, style: TextStyle(color: isClients ? Colors.white : Colors.black)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      !isClients ? Text(message.sender, style: TextStyle(fontWeight: FontWeight.bold)) : SizedBox(),
+                      Text(message.message, style: TextStyle(color: isClients ? Colors.white : Colors.black))
+                    ],
+                  ),
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.of(context).size.width/2+20,
                   ),
