@@ -45,7 +45,7 @@ public class ChatHandler {
 							super.onClientSuccess(client, result);
 							//if msg delivered delete
 							User user = db.getUser(UUID.fromString(result));
-							db.deleteMessages(user);
+							db.deleteMessage(user, 0);
 						}
 					});
 				}catch(Exception e) {

@@ -219,5 +219,12 @@ public class Database {
 			e.printStackTrace();
 		}
 	}
+	public void deleteMessage(User user, int index) {
+		try(Connection conn = getConnection()){
+			conn.createStatement().executeUpdate("UPDATE users SET messages = messages - "+ index +" WHERE users.token = '"+ user.getToken() +"';");
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	
 }
