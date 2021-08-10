@@ -3,6 +3,7 @@ package main.java.bernardic.jb.server.handlers;
 import java.util.UUID;
 
 import com.corundumstudio.socketio.AckRequest;
+import com.corundumstudio.socketio.BroadcastAckCallback;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.DataListener;
@@ -38,7 +39,17 @@ public class ChatHandler {
 						db.addMessage(group.getMembers()[i], group.getGroupUUID(), packet.getMessage(), user.getUsername());
 					}
 					ChatMessageView msg = new ChatMessageView(group.getGroupUUID(), packet.getMessage(), user.getUsername());
-					server.getRoomOperations(packet.getGroupUUID()).sendEvent("message", msg);
+					server.getRoomOperations(packet.getGroupUUID()).sendEvent("message", msg, new BroadcastAckCallback<String>(String.class) {
+						@Override
+						protected void onClientSuccess(SocketIOClient client, String result) {
+							super.onClientSuccess(client, result);
+							//if msg delivered delete
+							System.out.println(client);
+							System.out.println(result);
+							User user = db.getUser(UUID.fromString(result));
+							db.deleteMessages(user);
+						}
+					});
 				}catch(Exception e) {
 					e.printStackTrace();
 				}

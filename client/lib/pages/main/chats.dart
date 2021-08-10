@@ -43,7 +43,9 @@ class _ChatsPageState extends State<ChatsPage> {
     super.initState();
     if(widget.groups.isEmpty){
       _fetchGroups();
-      Client.socket.on("message", (json) {
+      Client.socket.on("message", (data) {
+        data[1](Client.token); //send ack that message is delivered
+        var json = data[0];
         if(this.mounted){
           setState(() {
             if(widget.groups[json["groupUUID"]] == null){ // fetch group if doesn't exist

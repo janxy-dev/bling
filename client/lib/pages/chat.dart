@@ -40,7 +40,8 @@ class _ChatState extends State<Chat> {
     ),
   );
 
-  Widget messageBuilder(MessageModel message, bool isClients){
+  Widget messageBuilder(MessageModel message){
+    bool isClients = message.sender == Client.user.username;
     Widget avatar = CircleAvatar(backgroundImage: NetworkImage("https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"), radius: 20.0);
     if(message.sender.isEmpty) avatar = SizedBox();
     return Container(
@@ -101,7 +102,7 @@ class _ChatState extends State<Chat> {
             child: ListView(
               reverse: true,
               padding: EdgeInsets.only(bottom: 10.0),
-              children: widget.group.messages.map((e) => messageBuilder(e, false)).toList().reversed.toList(),
+              children: widget.group.messages.map((e) => messageBuilder(e)).toList().reversed.toList(),
             ),
           ),
           //Input field
