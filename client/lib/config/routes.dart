@@ -1,8 +1,10 @@
+import 'package:bling/core/client.dart';
 import 'package:bling/core/models/group.dart';
 import 'package:bling/pages/auth.dart';
 import 'package:bling/pages/auth/login.dart';
 import 'package:bling/pages/auth/signup.dart';
 import 'package:bling/pages/chat.dart';
+import 'package:bling/pages/loading.dart';
 import 'package:bling/pages/main/friends.dart';
 import 'package:bling/pages/main/chats.dart';
 import 'package:bling/pages/main/profile.dart';
@@ -36,10 +38,13 @@ class Routes{
   }
 
   static Map<String, GroupModel> _groups = {};
-  static Route<dynamic> generateRoute(RouteSettings settings){
+  static Route<dynamic> generateRoute(RouteSettings settings) {
     switch(settings.name){
       case '/':
-        if(settings.arguments == null) return MaterialPageRoute(builder: (_) => AuthPage());
+        if(Client.prefs == null){
+          return MaterialPageRoute(builder: (_) => LoadingPage());
+        }
+        if(Client.token.isEmpty) return MaterialPageRoute(builder: (_) => AuthPage());
         return MaterialPageRoute(builder: (context) {
           return Scaffold(
             body:
@@ -68,7 +73,7 @@ class Routes{
                               scrollDirection: Axis.horizontal,
                               controller: pageCtrl,
                               children: [
-                                CallsPage(),
+                                FriendsPage(),
                                 ChatsPage(_groups),
                                 ProfilePage()
                               ],

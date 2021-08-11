@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
             _textField("Username", username),
             _textField("Password", password, obscureText: true),
             TextButton(onPressed: (){
-              Client.login(new LoginPacket(username.text, password.text), onSuccess: ()=>Navigator.of(context).pushNamed("/", arguments: Client.token),
+              Client.login(new LoginPacket(username.text, password.text), onSuccess: ()=>Navigator.of(context).pushNamed("/"),
               onError: (err){
                 setState(() {
                   errors = err;

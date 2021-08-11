@@ -62,7 +62,7 @@ class _SignupPageState extends State<SignupPage> {
             _textField("Password", password, obscureText: true),
             _textField("Confirm Password", conPassword, obscureText: true),
             TextButton(onPressed: (){
-              Client.register(RegisterPacket(username.text, email.text, password.text, conPassword.text), onSuccess: ()=>Navigator.of(context).pushNamed("/", arguments: Client.token),
+              Client.register(RegisterPacket(username.text, email.text, password.text, conPassword.text), onSuccess: ()=>Navigator.of(context).pushNamed("/"),
               onError: (err){
                 setState(() {
                   errors = err;

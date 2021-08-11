@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:bling/config/themes.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'models/user.dart';
@@ -9,8 +12,16 @@ import 'packets/register.dart';
 class Client{
    static late IO.Socket socket;
    static late LocalUserModel user;
+   static SharedPreferences? prefs;
    static String token = "";
-  static void connect(){
+   static Future<void> loadPrefs() async{
+     prefs = await SharedPreferences.getInstance();
+     Client.token = prefs?.getString("token") ?? "";
+     if(Client.token.isNotEmpty){
+       _fetchUser();
+     }
+   }
+  static void connect() {
      socket = IO.io("http://10.0.2.2:5000", <String, dynamic>{
        "transports": ["websocket"],
        "autoConnect": false,
@@ -23,13 +34,17 @@ class Client{
        Client.token = token;
      });
   }
-  static void _auth(response, void onSuccess()?, void onError(List<String> err)?){
+  static void _fetchUser(){
+    Client.fetch("fetchLocalUser", onData: (json){
+      Client.user = LocalUserModel.fromJson(json);
+    });
+  }
+  static void _auth(response, void onSuccess()?, void onError(List<String> err)?) async{
     if(response["ok"]){
       Client.token = response["token"];
       if(onSuccess != null){
-        Client.fetch("fetchLocalUser", onData: (json){
-          Client.user = LocalUserModel.fromJson(json);
-        });
+        _fetchUser();
+        prefs?.setString("token", Client.token);
         onSuccess();
       }
       return;
