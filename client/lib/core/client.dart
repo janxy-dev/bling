@@ -23,9 +23,6 @@ class Client{
      socket.onConnect((data) {
        print("Connected to server!");
      });
-     socket.on("login", (token){
-       Client.token = token;
-     });
   }
   static void fetchUser(){
     Client.fetch("fetchLocalUser", onData: (json){
@@ -35,9 +32,9 @@ class Client{
   static void _auth(response, void onSuccess()?, void onError(List<String> err)?) async{
     if(response["ok"]){
       Client.token = response["token"];
+      fetchUser();
+      Storage.prefs.setString("token", Client.token);
       if(onSuccess != null){
-        fetchUser();
-        Storage.prefs.setString("token", Client.token);
         onSuccess();
       }
       return;
@@ -70,5 +67,9 @@ class Client{
    }
    static void joinGroup(String inviteCode){
     socket.emit("joinGroup", jsonEncode({"token": Client.token, "inviteCode": inviteCode}));
+   }
+   static void logout(){
+    Client.token = "";
+    Storage.prefs.setString("token", "");
    }
 }

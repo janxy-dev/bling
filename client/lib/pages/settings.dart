@@ -1,4 +1,5 @@
 import 'package:bling/config/themes.dart';
+import 'package:bling/core/client.dart';
 import 'package:bling/widgets/app_bars.dart';
 import 'package:bling/widgets/setting.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,13 @@ class SettingsPage extends StatelessWidget {
                     ToggleSetting(title: "Dark Theme", onToggled: (bool value){
                       Themes.themes.toggleTheme();
                     }),
+                    Padding(
+                      padding: EdgeInsets.only(left: 150.0, right: 150.0),
+                      child: TextButton(onPressed: (){
+                        Client.logout();
+                        Navigator.of(context).pushNamed("/");
+                      }, child: Text("Log out")),
+                    ),
                   ],
                 ),
               )

@@ -17,7 +17,6 @@ class Storage{
     return Future.value(query.map((e) => MessageModel(e["message"], e["sender"], e["group_uuid"])).toList());
   }
   static void addMessage(MessageModel msg){
-    database.rawQuery("SELECT * FROM messages").then((value) => print(value));
     database.insert("messages", {"message": msg.message, "sender": msg.sender, "group_uuid": msg.groupUUID});
   }
 }

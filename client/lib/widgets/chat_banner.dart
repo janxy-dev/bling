@@ -12,6 +12,7 @@ class ChatBanner extends StatefulWidget {
 class _ChatBannerState extends State<ChatBanner> {
   @override
   Widget build(BuildContext context) {
+    print(widget.group);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => Navigator.of(context).pushNamed("/chat", arguments: widget.group),

@@ -35,6 +35,7 @@ class _ChatsPageState extends State<ChatsPage> {
             String groupUUID = widget.groups.keys.elementAt(i);
             Storage.getMessages(groupUUID).then((value) {
                 widget.groups[groupUUID]!.messages.addAll(value);
+                setState(() {});
             });
           }
         });
