@@ -1,13 +1,20 @@
 import 'package:bling/core/client.dart';
 import 'package:bling/core/models/group.dart';
 import 'package:bling/core/models/message.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:bling/core/storage.dart';
 import 'package:flutter/material.dart';
 
-class Chat extends StatefulWidget {
+class ChatArguments{
   final GroupModel group;
-  Chat(this.group);
+  final Function updateParent;
+  ChatArguments(this.group, this.updateParent);
+}
 
+class Chat extends StatefulWidget {
+  final ChatArguments args;
+  GroupModel get group => args.group;
+  Function get updateParent => args.updateParent;
+  Chat(this.args);
   @override
   _ChatState createState() => _ChatState();
 }
@@ -85,10 +92,27 @@ class _ChatState extends State<Chat> {
       setState(() {}); //update state on message
     }
   }
+  ScrollController scrollController = new ScrollController();
   @override
   void initState() {
     super.initState();
     Client.socket.on("message", _onMsg);
+    bool buffering = false;
+    scrollController.addListener(() {
+      if(scrollController.position.atEdge){
+        if(scrollController.position.pixels != 0){
+          if(!buffering){
+            buffering = true;
+            Storage.getMessages(widget.group.groupUUID, widget.group.messages.length-1, 10).then((value){
+              widget.group.messages.insertAll(0, value);
+              widget.updateParent();
+              setState(() {});
+              buffering = false;
+            });
+          }
+        }
+      }
+    });
   }
   @override
   void dispose() {
@@ -108,6 +132,7 @@ class _ChatState extends State<Chat> {
             child: ListView(
               reverse: true,
               padding: EdgeInsets.only(bottom: 10.0),
+              controller: scrollController,
               children: widget.group.messages.map((e) => messageBuilder(e)).toList().reversed.toList(),
             ),
           ),

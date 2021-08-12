@@ -1,4 +1,6 @@
 import 'package:bling/core/models/group.dart';
+import 'package:bling/pages/chat.dart';
+import 'package:bling/pages/main/chats.dart';
 import 'package:flutter/material.dart';
 
 class ChatBanner extends StatefulWidget {
@@ -12,10 +14,9 @@ class ChatBanner extends StatefulWidget {
 class _ChatBannerState extends State<ChatBanner> {
   @override
   Widget build(BuildContext context) {
-    print(widget.group);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => Navigator.of(context).pushNamed("/chat", arguments: widget.group),
+      onTap: () => Navigator.of(context).pushNamed("/chat", arguments: ChatArguments(widget.group, (){setState(() {});})),
       child: Padding(
         padding: EdgeInsets.only(left: 15.0),
         child: Row(

@@ -9,11 +9,13 @@ class Storage{
   static Future<void> load() async{
     prefs = await SharedPreferences.getInstance();
     database = await openDatabase("database.db");
-    await database.execute("CREATE TABLE IF NOT EXISTS messages (message TEXT, sender VARCHAR(15), group_uuid CHAR(36));");
+    await database.execute("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, sender VARCHAR(15), group_uuid CHAR(36));");
     isLoaded = true;
   }
-  static Future<List<MessageModel>> getMessages(String groupUUID) async{
-    List<Map> query = await database.rawQuery("SELECT * FROM messages WHERE group_uuid = '${groupUUID}'");
+  static Future<List<MessageModel>> getMessages(String groupUUID, int index, int count) async{
+    int length = Sqflite.firstIntValue(await database.rawQuery('SELECT COUNT(*) FROM messages')) ?? 0;
+    if(length == 0) return Future.value([]);
+    List<Map> query = await database.rawQuery("SELECT * FROM messages WHERE group_uuid = '${groupUUID}' AND id <= ${length-index} AND id > ${length-index-count}");
     return Future.value(query.map((e) => MessageModel(e["message"], e["sender"], e["group_uuid"])).toList());
   }
   static void addMessage(MessageModel msg){

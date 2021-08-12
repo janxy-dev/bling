@@ -33,7 +33,7 @@ class _ChatsPageState extends State<ChatsPage> {
           //add messages to groups
           for(int i = 0; i<widget.groups.keys.length; i++){
             String groupUUID = widget.groups.keys.elementAt(i);
-            Storage.getMessages(groupUUID).then((value) {
+            Storage.getMessages(groupUUID, 0, 20).then((value) {
                 widget.groups[groupUUID]!.messages.addAll(value);
                 setState(() {});
             });

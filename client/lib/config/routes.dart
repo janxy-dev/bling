@@ -94,7 +94,7 @@ class Routes{
       case '/settings':
         return MaterialPageRoute(builder: (_) => SettingsPage());
       case '/chat':
-        return MaterialPageRoute(builder: (_) => Chat(settings.arguments as GroupModel));
+        return MaterialPageRoute(builder: (_) => Chat(settings.arguments as ChatArguments));
       case '/login':
         return MaterialPageRoute(builder: (_) => LoginPage());
       case '/signup':
