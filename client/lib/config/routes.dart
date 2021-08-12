@@ -1,5 +1,6 @@
 import 'package:bling/core/client.dart';
 import 'package:bling/core/models/group.dart';
+import 'package:bling/core/storage.dart';
 import 'package:bling/pages/auth.dart';
 import 'package:bling/pages/auth/login.dart';
 import 'package:bling/pages/auth/signup.dart';
@@ -41,7 +42,7 @@ class Routes{
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch(settings.name){
       case '/':
-        if(Client.prefs == null){
+        if(!Storage.isLoaded){
           return MaterialPageRoute(builder: (_) => LoadingPage());
         }
         if(Client.token.isEmpty) return MaterialPageRoute(builder: (_) => AuthPage());

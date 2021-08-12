@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../storage.dart';
 import 'message.dart';
 
 class UserModel{
@@ -8,20 +9,13 @@ class UserModel{
   UserModel.fromJson(Map<String, dynamic> json) : username = json['username'];
 }
 
-List<MessageModel> _messagesFromJson(json){
-  List<MessageModel> msgs = [];
-  for(int i = 0; i<json.length; i++){
-    msgs.add(MessageModel.fromJson(json[i]));
-  }
-  return msgs;
-}
-
 class LocalUserModel {
   LocalUserModel();
   String username = "";
-  List<MessageModel> messages = [];
-  LocalUserModel.fromJson(Map<String, dynamic> json) :
-        username = json['username'],
-        messages = _messagesFromJson(json['messages']);
-
+  LocalUserModel.fromJson(Map<String, dynamic> json) : username = json['username']{
+    var msgs = json['messages'];
+    for(int i = 0; i<msgs.length; i++){
+      Storage.addMessage(MessageModel.fromJson(msgs[i]));
+   }
+  }
 }
