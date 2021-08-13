@@ -33,9 +33,11 @@ class _ChatsPageState extends State<ChatsPage> {
           //add messages to groups
           for(int i = 0; i<widget.groups.keys.length; i++){
             String groupUUID = widget.groups.keys.elementAt(i);
-            Storage.getMessages(groupUUID, 0, 20).then((value) {
+            Storage.getMessagesCount(groupUUID).then((msgCount) {
+              Storage.getMessages(groupUUID, msgCount, 15).then((value) {
                 widget.groups[groupUUID]!.messages.addAll(value);
                 setState(() {});
+              });
             });
           }
         });
@@ -48,8 +50,9 @@ class _ChatsPageState extends State<ChatsPage> {
     if(widget.groups.isEmpty){
       _fetchGroups();
       Client.socket.on("message", (data) {
-        data[1](Client.token); //send ack that message is delivered
         var json = data[0];
+        if(json == null) json = data;
+        else data[1](Client.token); //send ack that message is delivered
         Storage.addMessage(MessageModel.fromJson(json));
         if(this.mounted){
           setState(() {

@@ -1,3 +1,4 @@
+import 'package:bling/core/client.dart';
 import 'package:bling/core/models/group.dart';
 import 'package:bling/pages/chat.dart';
 import 'package:bling/pages/main/chats.dart';
@@ -14,6 +15,12 @@ class ChatBanner extends StatefulWidget {
 class _ChatBannerState extends State<ChatBanner> {
   @override
   Widget build(BuildContext context) {
+    String message = "";
+    if(widget.group.messages.isNotEmpty){
+      String sender = widget.group.messages.last.sender == Client.user.username || widget.group.messages.last.sender == ""
+          ? "" : widget.group.messages.last.sender+": ";
+      message = sender + widget.group.messages.last.message;
+    }
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => Navigator.of(context).pushNamed("/chat", arguments: ChatArguments(widget.group, (){setState(() {});})),
@@ -38,7 +45,7 @@ class _ChatBannerState extends State<ChatBanner> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(widget.group.name, style: TextStyle(fontSize: 14)),
-                      Text(widget.group.messages.isNotEmpty ? widget.group.messages.last.message : "", style: TextStyle(fontSize: 12))
+                      Text(message, style: TextStyle(fontSize: 12))
                     ],
                   ),
                 )

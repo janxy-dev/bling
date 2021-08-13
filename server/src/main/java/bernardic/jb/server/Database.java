@@ -203,10 +203,10 @@ public class Database {
 		}
 		return null;
 	}
-	public void addMessage(UUID recieverToken, UUID groupUUID, String message, String senderUsername) {
+	public void addMessage(UUID recieverToken, ChatMessageView msg) {
 		try(Connection conn = getConnection()){
 			PreparedStatement stmt = conn.prepareStatement("UPDATE users SET messages = messages || ?::jsonb WHERE users.token = '"+ recieverToken +"';");
-			stmt.setString(1, new JSONObject(new ChatMessageView(groupUUID, message, senderUsername)).toString());
+			stmt.setString(1, new JSONObject(msg).toString());
 			stmt.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();

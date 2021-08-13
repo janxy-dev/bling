@@ -35,9 +35,10 @@ public class GroupHandler {
 				String groupName = json.getString("groupName");
 				if(Server.getDatabase().getUser(UUID.fromString(token)) == null) return;
 				Group group = Server.getDatabase().createGroup(groupName);
-				Server.getDatabase().addUserToGroup(db.getUser(UUID.fromString(token)), group);
+				User user = db.getUser(UUID.fromString(token));
+				Server.getDatabase().addUserToGroup(user, group);
 				client.joinRoom(group.getGroupUUID().toString());
-				client.sendEvent("message", new ChatMessageView(group.getGroupUUID(), "You created group \""+ group.getName() + "\"", ""));
+				client.sendEvent("message", new ChatMessageView(group.getGroupUUID(), UUID.randomUUID(), user.getUsername() + " created group \""+ group.getName() + "\"", ""));
 			}
 		});
 	}
@@ -53,7 +54,7 @@ public class GroupHandler {
 				Group group = Server.getDatabase().getGroup(inviteCode);
 				Server.getDatabase().addUserToGroup(db.getUser(UUID.fromString(token)), group);
 				client.joinRoom(group.getGroupUUID().toString());
-				server.getRoomOperations(group.getGroupUUID().toString()).sendEvent("message", new ChatMessageView(group.getGroupUUID(), user.getUsername() + " has joined.", ""));
+				server.getRoomOperations(group.getGroupUUID().toString()).sendEvent("message", new ChatMessageView(group.getGroupUUID(), UUID.randomUUID(), user.getUsername() + " has joined.", ""));
 			}
 		});
 	}

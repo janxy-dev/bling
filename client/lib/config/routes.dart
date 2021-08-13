@@ -15,12 +15,19 @@ import 'package:flutter/material.dart';
 import '../pages/settings.dart';
 
 class Routes{
-  static final PageController pageCtrl = PageController(initialPage: 1);
-  static int page = 1;
-
-  static ValueNotifier _pageNotifier = ValueNotifier(page);
-  static bool _isListenerAdded = false;
-  //Custom event for switching pages on half
+  static late PageController pageCtrl;
+  static late int page;
+  static late ValueNotifier _pageNotifier;
+  static late bool _isListenerAdded;
+  static late Map<String, GroupModel> _groups;
+  static void init(){
+    pageCtrl = PageController(initialPage: 1);
+    page = 1;
+    _pageNotifier = ValueNotifier(page);
+    _isListenerAdded = false;
+    _groups = {};
+  }
+  //Custom event for switching pages on half (change later)
   static void addPageListener(void func()){
     _pageNotifier.addListener(func);
     //Invoke event inside PageControl event
@@ -37,8 +44,6 @@ class Routes{
     });
     _isListenerAdded = true;
   }
-
-  static Map<String, GroupModel> _groups = {};
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch(settings.name){
       case '/':

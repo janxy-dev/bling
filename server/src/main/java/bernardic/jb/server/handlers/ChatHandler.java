@@ -35,10 +35,11 @@ public class ChatHandler {
 					if(user == null) return;
 					Group group = db.getGroup(UUID.fromString(packet.getGroupUUID()));
 					if(group == null) return;
+					ChatMessageView msg = new ChatMessageView(group.getGroupUUID(), UUID.randomUUID(), packet.getMessage(), user.getUsername());
 					for(int i = 0; i<group.getMembers().length; i++) {
-						db.addMessage(group.getMembers()[i], group.getGroupUUID(), packet.getMessage(), user.getUsername());
+						db.addMessage(group.getMembers()[i], msg);
 					}
-					ChatMessageView msg = new ChatMessageView(group.getGroupUUID(), packet.getMessage(), user.getUsername());
+					
 					server.getRoomOperations(packet.getGroupUUID()).sendEvent("message", msg, new BroadcastAckCallback<String>(String.class) {
 						@Override
 						protected void onClientSuccess(SocketIOClient client, String result) {

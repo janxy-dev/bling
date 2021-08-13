@@ -1,10 +1,11 @@
+import 'package:bling/widgets/restart.dart';
 import 'package:flutter/material.dart';
 import 'config/routes.dart';
 import 'config/themes.dart';
 import 'core/client.dart';
 
 void main() {
-  runApp(Bling());
+  runApp(RestartWidget(child: Bling()));
 }
 
 class Bling extends StatefulWidget {
@@ -21,6 +22,7 @@ class _BlingState extends State<Bling> {
     Themes.themes.addListener(() {
       setState(() {});
     });
+    Routes.init();
   }
 
   @override

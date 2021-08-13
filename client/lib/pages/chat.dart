@@ -66,7 +66,7 @@ class _ChatState extends State<Chat> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      !isClients ? Text(message.sender, style: TextStyle(fontWeight: FontWeight.bold)) : SizedBox(),
+                      !isClients && message.sender.isNotEmpty ? Text(message.sender, style: TextStyle(fontWeight: FontWeight.bold)) : SizedBox(),
                       Text(message.message, style: TextStyle(color: isClients ? Colors.white : Colors.black))
                     ],
                   ),
@@ -99,21 +99,18 @@ class _ChatState extends State<Chat> {
     Client.socket.on("message", _onMsg);
     bool buffering = false;
     scrollController.addListener(() {
-      if(scrollController.position.atEdge){
-        if(scrollController.position.pixels != 0){
-          if(!buffering){
+        if(scrollController.position.extentAfter < 500 && !buffering){
             buffering = true;
-            Storage.getMessages(widget.group.groupUUID, widget.group.messages.length-1, 10).then((value){
+            Storage.getMessages(widget.group.groupUUID, widget.group.messages.first.id-1, 10).then((value) {
+              for (int i = 0; i < value.length; i++) {}
               widget.group.messages.insertAll(0, value);
               widget.updateParent();
               setState(() {});
               buffering = false;
             });
-          }
         }
-      }
-    });
-  }
+      });
+    }
   @override
   void dispose() {
     super.dispose();

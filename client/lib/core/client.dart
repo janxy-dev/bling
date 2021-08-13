@@ -1,9 +1,6 @@
 import 'dart:convert';
 
-import 'package:bling/config/themes.dart';
 import 'package:bling/core/storage.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'models/user.dart';
@@ -69,7 +66,7 @@ class Client{
     socket.emit("joinGroup", jsonEncode({"token": Client.token, "inviteCode": inviteCode}));
    }
    static void logout(){
-    Client.token = "";
+    token = "";
     Storage.prefs.setString("token", "");
    }
 }
