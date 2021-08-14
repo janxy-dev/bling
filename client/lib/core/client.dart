@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bling/core/storage.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'models/user.dart';
@@ -11,6 +12,8 @@ class Client{
    static late IO.Socket socket;
    static late LocalUserModel user;
    static String token = "";
+   static String firebaseToken = "";
+
   static void connect() {
      socket = IO.io("http://10.0.2.2:5000", <String, dynamic>{
        "transports": ["websocket"],
@@ -29,7 +32,6 @@ class Client{
   static void _auth(response, void onSuccess()?, void onError(List<String> err)?) async{
     if(response["ok"]){
       Client.token = response["token"];
-      fetchUser();
       Storage.prefs.setString("token", Client.token);
       if(onSuccess != null){
         onSuccess();
@@ -68,5 +70,23 @@ class Client{
    static void logout(){
     token = "";
     Storage.prefs.setString("token", "");
+   }
+   static Future<NotificationSettings> requestNotificationPermissions() async{
+     return Future.value(await FirebaseMessaging.instance.requestPermission(
+       alert: true,
+       announcement: false,
+       badge: true,
+       carPlay: false,
+       criticalAlert: false,
+       provisional: false,
+       sound: true,)
+     );
+   }
+   static void initFirebase() async{
+     await requestNotificationPermissions();
+     firebaseToken = await FirebaseMessaging.instance.getToken(vapidKey: "BD3OQxNYMJE9q7muxrRdpOWlLS-X_jUIKMZYKhTRytwPad2X_Uf0MGTT592U8hM7tT_3Ph5di84BSu9Pcz2mCDY") ?? "";
+   }
+   static void sendFirebaseToken(){
+    socket.emit("firebaseToken", jsonEncode({"token": Client.token, "firebaseToken": Client.firebaseToken}));
    }
 }

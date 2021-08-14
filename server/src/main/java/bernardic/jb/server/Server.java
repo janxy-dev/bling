@@ -10,6 +10,7 @@ import com.corundumstudio.socketio.listener.ConnectListener;
 import main.java.bernardic.jb.server.handlers.AuthHandler;
 import main.java.bernardic.jb.server.handlers.ChatHandler;
 import main.java.bernardic.jb.server.handlers.FetchHandler;
+import main.java.bernardic.jb.server.handlers.FirebaseHandler;
 import main.java.bernardic.jb.server.handlers.GroupHandler;
 
 public class Server {
@@ -37,11 +38,13 @@ public class Server {
 		AuthHandler authHandler = new AuthHandler(server);
 		GroupHandler groupHandler = new GroupHandler(server);
 		ChatHandler chatHandler = new ChatHandler(server);
+		FirebaseHandler firebaseHandler = new FirebaseHandler(server);
 		
 		authHandler.init();
 		fetchHandler.init();
 		groupHandler.init();
 		chatHandler.init();
+		firebaseHandler.init();
         server.start();
 	}
 }

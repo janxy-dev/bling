@@ -38,6 +38,7 @@ public class ChatHandler {
 					ChatMessageView msg = new ChatMessageView(group.getGroupUUID(), UUID.randomUUID(), packet.getMessage(), user.getUsername());
 					for(int i = 0; i<group.getMembers().length; i++) {
 						db.addMessage(group.getMembers()[i], msg);
+						FirebaseHandler.getInstance().pushMessageNotification(group.getMembers()[i].toString());
 					}
 					
 					server.getRoomOperations(packet.getGroupUUID()).sendEvent("message", msg, new BroadcastAckCallback<String>(String.class) {

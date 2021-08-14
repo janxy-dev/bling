@@ -1,4 +1,5 @@
 import 'package:bling/core/storage.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:bling/core/client.dart';
 class LoadingPage extends StatelessWidget {
@@ -9,6 +10,7 @@ class LoadingPage extends StatelessWidget {
         Client.token = Storage.prefs.getString("token") ?? "";
         if(Client.token.isNotEmpty){
           Client.fetchUser();
+          Client.sendFirebaseToken();
         }
         Navigator.of(context).pushNamed('/');
       });

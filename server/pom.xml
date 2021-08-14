@@ -40,5 +40,10 @@
   		<artifactId>jbcrypt</artifactId>
   		<version>0.4</version>
   	</dependency>
+  	<dependency>
+  		<groupId>com.google.firebase</groupId>
+  		<artifactId>firebase-admin</artifactId>
+  		<version>8.0.1</version>
+  	</dependency>
   </dependencies>
 </project>

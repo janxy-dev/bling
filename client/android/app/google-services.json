@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1007572541331",
+    "project_id": "bling-84ced",
+    "storage_bucket": "bling-84ced.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1007572541331:android:96a70ca8b13fc0a667d266",
+        "android_client_info": {
+          "package_name": "com.github.jbernardic.bling"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1007572541331-iak5e9sdlcek03bu7rglr7v7kjnb8oka.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyUkEHbAR2KfwYqBXiahHWRqMcmphiM44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1007572541331-iak5e9sdlcek03bu7rglr7v7kjnb8oka.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
