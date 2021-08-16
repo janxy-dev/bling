@@ -3,7 +3,6 @@ package main.java.bernardic.jb.server.handlers;
 import java.util.UUID;
 
 import com.corundumstudio.socketio.AckRequest;
-import com.corundumstudio.socketio.BroadcastAckCallback;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.DataListener;
@@ -25,6 +24,7 @@ public class ChatHandler {
 	public void init() {
 		handleChatMessage();
 	}
+
 	public void handleChatMessage() {
 		server.addEventListener("sendMessage", String.class, new DataListener<String>() {
 			@Override
@@ -40,16 +40,7 @@ public class ChatHandler {
 						db.addMessage(group.getMembers()[i], msg);
 						FirebaseHandler.getInstance().pushMessageNotification(group.getMembers()[i].toString());
 					}
-					
-					server.getRoomOperations(packet.getGroupUUID()).sendEvent("message", msg, new BroadcastAckCallback<String>(String.class) {
-						@Override
-						protected void onClientSuccess(SocketIOClient client, String result) {
-							super.onClientSuccess(client, result);
-							//if msg delivered delete
-							User user = db.getUser(UUID.fromString(result));
-							db.deleteMessage(user, 0);
-						}
-					});
+					Server.sendMessage(msg);
 				}catch(Exception e) {
 					e.printStackTrace();
 				}

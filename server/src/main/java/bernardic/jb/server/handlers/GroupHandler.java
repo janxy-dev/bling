@@ -54,7 +54,7 @@ public class GroupHandler {
 				Group group = Server.getDatabase().getGroup(inviteCode);
 				Server.getDatabase().addUserToGroup(db.getUser(UUID.fromString(token)), group);
 				client.joinRoom(group.getGroupUUID().toString());
-				server.getRoomOperations(group.getGroupUUID().toString()).sendEvent("message", new ChatMessageView(group.getGroupUUID(), UUID.randomUUID(), user.getUsername() + " has joined.", ""));
+				Server.sendMessage(new ChatMessageView(group.getGroupUUID(), UUID.randomUUID(), user.getUsername() + " has joined.", ""));
 			}
 		});
 	}
