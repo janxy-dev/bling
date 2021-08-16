@@ -9,8 +9,8 @@ class LoadingPage extends StatelessWidget {
       Storage.load().then((value) {
         Client.token = Storage.prefs.getString("token") ?? "";
         if(Client.token.isNotEmpty){
-          Client.fetchUser();
           Client.sendFirebaseToken();
+          Client.fetchUser();
         }
         Navigator.of(context).pushNamed('/');
       });

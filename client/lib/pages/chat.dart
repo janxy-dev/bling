@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 class ChatArguments{
   final GroupModel group;
   final Function updateParent;
-  ChatArguments(this.group, this.updateParent);
+  ChatArguments(this.group, this.updateParent){
+    updateParent();
+  }
 }
 
 class Chat extends StatefulWidget {
@@ -87,24 +89,34 @@ class _ChatState extends State<Chat> {
     );
   }
 
-  void _onMsg(json){
-    if(this.mounted){
-      setState(() {}); //update state on message
+  void seenMessages(){
+    Storage.seenMessages(widget.group);
+    List<MessageModel> msgs = widget.group.messages;
+    for(int i = 0; i<msgs.length; i++){
+      msgs[i].seen = true;
     }
+  }
+  void _onMsg(json){
+    Future.delayed(Duration(milliseconds: 1), (){
+      if(this.mounted){
+        setState(() {}); //update state on message
+        seenMessages();
+        widget.updateParent();
+      }
+    });
   }
   ScrollController scrollController = new ScrollController();
   @override
   void initState() {
     super.initState();
+    seenMessages();
     Client.socket.on("message", _onMsg);
     bool buffering = false;
     scrollController.addListener(() {
         if(scrollController.position.extentAfter < 500 && !buffering){
             buffering = true;
             Storage.getMessages(widget.group.groupUUID, widget.group.messages.first.id-1, 10).then((value) {
-              for (int i = 0; i < value.length; i++) {}
               widget.group.messages.insertAll(0, value);
-              widget.updateParent();
               setState(() {});
               buffering = false;
             });

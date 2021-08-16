@@ -33,6 +33,7 @@ class Client{
     if(response["ok"]){
       Client.token = response["token"];
       Storage.prefs.setString("token", Client.token);
+      fetchUser();
       if(onSuccess != null){
         onSuccess();
       }

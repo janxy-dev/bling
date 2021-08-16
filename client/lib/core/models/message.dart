@@ -4,7 +4,8 @@ class MessageModel{
   String groupUUID;
   String uuid;
   int id = 0;
-  MessageModel(this.message, this.sender, this.groupUUID, this.uuid, this.id);
+  bool seen = false;
+  MessageModel(this.message, this.sender, this.groupUUID, this.uuid, this.id, this.seen);
   MessageModel.fromJson(Map<String, dynamic> json) :
         message = json['message'],
         sender = json['sender'],

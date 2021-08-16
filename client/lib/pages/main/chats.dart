@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:bling/core/client.dart';
 import 'package:bling/core/models/group.dart';
 import 'package:bling/core/models/message.dart';
@@ -53,20 +51,22 @@ class _ChatsPageState extends State<ChatsPage> {
         var json = data[0];
         if(json == null) json = data;
         else data[1](Client.token); //send ack that message is delivered
-        Storage.addMessage(MessageModel.fromJson(json));
-        if(this.mounted){
+        MessageModel message = MessageModel.fromJson(json);
+        Storage.addMessage(message);
+        // fetch group if doesn't exist
+        if(widget.groups[message.groupUUID] == null){
+          Client.fetch("fetchGroup", args: [json["groupUUID"]], onData: (data){
+            GroupModel group = GroupModel.fromJson(data);
+            group.messages.add(message);
+            widget.groups.putIfAbsent(data["groupUUID"], () => group);
+            if(this.mounted) setState(() {}); //refresh
+          });
+          return;
+        }
+        if(this.mounted) {
           setState(() {
-            // fetch group if doesn't exist
-            if(widget.groups[json["groupUUID"]] == null){
-              Client.fetch("fetchGroup", args: [json["groupUUID"]], onData: (data){
-                GroupModel group = GroupModel.fromJson(data);
-                MessageModel msg = MessageModel.fromJson(json);
-                group.messages.add(msg);
-                widget.groups.putIfAbsent(data["groupUUID"], () => group);
-                setState(() {}); //refresh
-              });
-            }
-            else widget.groups[json["groupUUID"]]?.messages.add(MessageModel.fromJson(json));
+            widget.groups[json["groupUUID"]]?.messages.add(
+                MessageModel.fromJson(json));
           });
         }
       });

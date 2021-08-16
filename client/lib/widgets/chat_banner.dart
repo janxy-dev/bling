@@ -13,6 +13,15 @@ class ChatBanner extends StatefulWidget {
 }
 
 class _ChatBannerState extends State<ChatBanner> {
+  Widget get newMessageSign => Container(
+    margin: EdgeInsets.only(right: 10.0),
+    width: 10,
+    height: 10,
+    decoration: BoxDecoration(
+      color: Colors.greenAccent,
+      shape: BoxShape.circle
+    ),
+  );
   @override
   Widget build(BuildContext context) {
     String message = "";
@@ -51,6 +60,7 @@ class _ChatBannerState extends State<ChatBanner> {
                 )
               ),
             ),
+            widget.group.messages.isNotEmpty && widget.group.messages.last.seen == false ? newMessageSign : SizedBox()
           ],
         ),
       ),
