@@ -97,13 +97,10 @@ class _ChatState extends State<Chat> {
     }
   }
   void _onMsg(json){
-    Future.delayed(Duration(milliseconds: 1), (){
-      if(this.mounted){
-        setState(() {}); //update state on message
-        seenMessages();
-        widget.updateParent();
-      }
-    });
+    if(this.mounted){
+      setState(() {}); //update state on message
+      seenMessages();
+    }
   }
   ScrollController scrollController = new ScrollController();
   @override

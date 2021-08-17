@@ -33,7 +33,7 @@ class _ChatBannerState extends State<ChatBanner> {
     }
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => widget.onPressed,
+      onTap: () => widget.onPressed(),
       child: Padding(
         padding: EdgeInsets.only(left: 15.0),
         child: Row(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'config/routes.dart';
 import 'config/themes.dart';
 import 'core/client.dart';
+import 'local_notifications.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,7 @@ class _BlingState extends State<Bling> {
     super.initState();
     Client.initFirebase();
     Client.connect();
+    LocalNotifications.init(context);
     Themes.themes.addListener(() {
       setState(() {});
     });

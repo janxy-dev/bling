@@ -4,7 +4,9 @@ import 'package:bling/core/models/message.dart';
 import 'package:bling/core/storage.dart';
 import 'package:bling/widgets/chat_banner.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../../local_notifications.dart';
 import '../chat.dart';
 
 class ChatsPage extends StatefulWidget {
@@ -66,9 +68,14 @@ class _ChatsPageState extends State<ChatsPage> {
           });
           return;
         }
+        //show local notification
+        if(currentGroup != null && currentGroup?.groupUUID != message.groupUUID){
+          GroupModel group = widget.groups[message.groupUUID]!;
+          LocalNotifications.showMessageNotification(group.name, group.groupUUID, message.sender, message.message);
+        }
         if(this.mounted) {
           setState(() {
-            widget.groups[json["groupUUID"]]?.messages.add(
+            widget.groups[message.groupUUID]?.messages.add(
                 MessageModel.fromJson(json));
           });
         }
@@ -82,7 +89,7 @@ class _ChatsPageState extends State<ChatsPage> {
         Divider(),
         Column(
           children: [...widget.groups.values.map((e) => ChatBanner(e, (){
-            Navigator.of(context).pushNamed("/chat", arguments: ChatArguments(e, (){setState(() {});}));
+            Navigator.of(context).pushNamed("/chat", arguments: ChatArguments(e, (){setState(() {}); currentGroup = null;}));
             currentGroup = e;
           }))].reversed.toList(),
         )
