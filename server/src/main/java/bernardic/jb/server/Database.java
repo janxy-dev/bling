@@ -203,6 +203,17 @@ public class Database {
 		}
 		return null;
 	}
+	public boolean isUserInGroup(User user, Group group) {
+		try(Connection conn = getConnection()){
+			ResultSet res = conn.createStatement().executeQuery("SELECT EXISTS(SELECT 1 FROM users WHERE token = '"+ user.getToken() +"' AND '"+ group.getGroupUUID() +"' = ANY(groups))");
+			if(res.next()) {
+				return res.getBoolean(1);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	public void addMessage(UUID recieverToken, ChatMessageView msg) {
 		try(Connection conn = getConnection()){
 			PreparedStatement stmt = conn.prepareStatement("UPDATE users SET messages = messages || ?::jsonb WHERE users.token = '"+ recieverToken +"';");

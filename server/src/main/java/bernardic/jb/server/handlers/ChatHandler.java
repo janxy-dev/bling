@@ -3,6 +3,7 @@ package main.java.bernardic.jb.server.handlers;
 import java.util.UUID;
 
 import com.corundumstudio.socketio.AckRequest;
+import com.corundumstudio.socketio.BroadcastAckCallback;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.DataListener;
@@ -38,12 +39,23 @@ public class ChatHandler {
 					ChatMessageView msg = new ChatMessageView(group.getGroupUUID(), UUID.randomUUID(), packet.getMessage(), user.getUsername());
 					for(int i = 0; i<group.getMembers().length; i++) {
 						db.addMessage(group.getMembers()[i], msg);
-						FirebaseHandler.getInstance().pushMessageNotification(group.getMembers()[i].toString());
+						FirebaseHandler.getInstance().pushMessageNotification(group.getMembers()[i].toString(), group.getName(), msg.getMessage());
 					}
-					Server.sendMessage(msg);
+					sendMessage(msg);
 				}catch(Exception e) {
 					e.printStackTrace();
 				}
+			}
+		});
+	}
+	public void sendMessage(ChatMessageView msg) {
+		server.getRoomOperations(msg.getGroupUUID().toString()).sendEvent("message", msg, new BroadcastAckCallback<String>(String.class) {
+			@Override
+			protected void onClientSuccess(SocketIOClient client, String result) {
+				super.onClientSuccess(client, result);
+				//if msg delivered delete
+				User user = db.getUser(UUID.fromString(result));
+				db.deleteMessage(user, 0);
 			}
 		});
 	}

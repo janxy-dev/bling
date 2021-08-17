@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 
 class ChatBanner extends StatefulWidget {
   final GroupModel group;
-  ChatBanner(this.group) : super(key: ValueKey(group.groupUUID));
+  final Function onPressed;
+  ChatBanner(this.group, this.onPressed) : super(key: ValueKey(group.groupUUID));
 
   @override
   _ChatBannerState createState() => _ChatBannerState();
@@ -32,7 +33,7 @@ class _ChatBannerState extends State<ChatBanner> {
     }
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => Navigator.of(context).pushNamed("/chat", arguments: ChatArguments(widget.group, (){setState(() {});})),
+      onTap: () => widget.onPressed,
       child: Padding(
         padding: EdgeInsets.only(left: 15.0),
         child: Row(

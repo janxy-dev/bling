@@ -52,9 +52,10 @@ public class GroupHandler {
 				User user = Server.getDatabase().getUser(UUID.fromString(token)); 
 				if(user == null) return;
 				Group group = Server.getDatabase().getGroup(inviteCode);
+				if(db.isUserInGroup(user, group)) return;
 				Server.getDatabase().addUserToGroup(db.getUser(UUID.fromString(token)), group);
 				client.joinRoom(group.getGroupUUID().toString());
-				Server.sendMessage(new ChatMessageView(group.getGroupUUID(), UUID.randomUUID(), user.getUsername() + " has joined.", ""));
+				Server.getChat().sendMessage(new ChatMessageView(group.getGroupUUID(), UUID.randomUUID(), user.getUsername() + " has joined.", ""));
 			}
 		});
 	}

@@ -26,14 +26,18 @@ class Client{
   }
   static void fetchUser(){
     Client.fetch("fetchLocalUser", onData: (json){
-      Client.user = LocalUserModel.fromJson(json);
+      user = LocalUserModel.fromJson(json);
     });
+  }
+  static void loginUser(){
+    fetchUser();
+    sendFirebaseToken();
   }
   static void _auth(response, void onSuccess()?, void onError(List<String> err)?) async{
     if(response["ok"]){
       Client.token = response["token"];
       Storage.prefs.setString("token", Client.token);
-      fetchUser();
+      Client.loginUser();
       if(onSuccess != null){
         onSuccess();
       }

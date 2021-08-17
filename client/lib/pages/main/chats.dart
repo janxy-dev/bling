@@ -5,6 +5,8 @@ import 'package:bling/core/storage.dart';
 import 'package:bling/widgets/chat_banner.dart';
 import 'package:flutter/material.dart';
 
+import '../chat.dart';
+
 class ChatsPage extends StatefulWidget {
   final Map<String, GroupModel> groups;
   ChatsPage(this.groups);
@@ -42,6 +44,7 @@ class _ChatsPageState extends State<ChatsPage> {
       }
     });
   }
+  GroupModel? currentGroup;
   @override
   void initState() {
     super.initState();
@@ -78,7 +81,10 @@ class _ChatsPageState extends State<ChatsPage> {
       children: [
         Divider(),
         Column(
-          children: [...widget.groups.values.map((e) => ChatBanner(e))].reversed.toList(),
+          children: [...widget.groups.values.map((e) => ChatBanner(e, (){
+            Navigator.of(context).pushNamed("/chat", arguments: ChatArguments(e, (){setState(() {});}));
+            currentGroup = e;
+          }))].reversed.toList(),
         )
       ],
     );

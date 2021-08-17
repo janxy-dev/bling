@@ -19,7 +19,7 @@ class SettingsPage extends StatelessWidget {
                       Themes.themes.toggleTheme();
                     }),
                     Padding(
-                      padding: EdgeInsets.only(left: 150.0, right: 150.0),
+                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width/2-40, right: MediaQuery.of(context).size.width/2-40),
                       child: TextButton(onPressed: (){
                         Client.logout();
                         RestartWidget.restartApp(context);
