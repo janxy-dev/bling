@@ -86,6 +86,9 @@ class _ChatsPageState extends State<ChatsPage> {
     }
     setState(() {
       group.messages.add(message);
+      //change group order
+      widget.groups.remove(group.groupUUID);
+      widget.groups.putIfAbsent(group.groupUUID, () => group);
     });
     Storage.addMessage(message);
   }
