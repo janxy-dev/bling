@@ -9,9 +9,9 @@ class LoadingPage extends StatelessWidget {
       Storage.load().then((value) {
         Client.token = Storage.prefs.getString("token") ?? "";
         if(Client.token.isNotEmpty){
-          Client.loginUser();
+          Client.fetchUser(()=>Navigator.of(context).pushNamed('/'));
         }
-        Navigator.of(context).pushNamed('/');
+        else Navigator.of(context).pushNamed('/');
       });
     }
     return Container(

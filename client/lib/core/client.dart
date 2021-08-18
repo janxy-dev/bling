@@ -25,23 +25,22 @@ class Client{
        print("Connected to server!");
      });
   }
-  static void fetchUser(){
+  static void fetchUser(Function onFetched){
     Client.fetch("fetchLocalUser", onData: (json){
       user = LocalUserModel.fromJson(json);
+      onFetched();
+      sendFirebaseToken();
     });
-  }
-  static void loginUser(){
-    fetchUser();
-    sendFirebaseToken();
   }
   static void _auth(response, void onSuccess()?, void onError(List<String> err)?) async{
     if(response["ok"]){
       Client.token = response["token"];
       Storage.prefs.setString("token", Client.token);
-      Client.loginUser();
-      if(onSuccess != null){
-        onSuccess();
-      }
+      fetchUser((){
+        if(onSuccess != null){
+          onSuccess();
+        }
+      });
       return;
     } else{
       if(onError != null){

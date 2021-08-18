@@ -1,9 +1,13 @@
 import 'package:bling/core/models/message.dart';
+import 'package:bling/pages/main/chats.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import 'config/routes.dart';
+
 class LocalNotifications{
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static List<Function> listeners = [];
   static void init(BuildContext context) async{
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('app_icon');
@@ -16,11 +20,13 @@ class LocalNotifications{
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: (payload) async{
           if(payload != null){
-            Navigator.of(context).pop();
-            Navigator.of(context).pushNamed("/");
+            for(int i = listeners.length-1; i>=0; i--){
+              listeners[i](payload);
+            }
           }
         });
   }
+
   static void showMessageNotification(String groupName, String groupUUID, String sender, String message) async{
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(

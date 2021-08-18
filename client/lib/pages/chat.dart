@@ -4,18 +4,16 @@ import 'package:bling/core/models/message.dart';
 import 'package:bling/core/storage.dart';
 import 'package:flutter/material.dart';
 
+import 'main/chats.dart';
 class ChatArguments{
-  final GroupModel group;
-  final Function updateParent;
-  ChatArguments(this.group, this.updateParent){
-    updateParent();
-  }
+  GroupModel group;
+  Function onLeave;
+  ChatArguments(this.group, {required this.onLeave});
 }
-
 class Chat extends StatefulWidget {
   final ChatArguments args;
   GroupModel get group => args.group;
-  Function get updateParent => args.updateParent;
+  Function get onLeave => args.onLeave;
   Chat(this.args);
   @override
   _ChatState createState() => _ChatState();
@@ -25,7 +23,7 @@ class _ChatState extends State<Chat> {
 
   AppBar _chatAppBar(String title) => AppBar(
     automaticallyImplyLeading: false,
-    leading: IconButton(onPressed: () { Navigator.pop(context); }, icon: Icon(Icons.close),),
+    leading: IconButton(onPressed: () { Navigator.pop(context); widget.onLeave();}, icon: Icon(Icons.close),),
     title: Text(title),
     centerTitle: true,
   );
@@ -88,25 +86,15 @@ class _ChatState extends State<Chat> {
       ),
     );
   }
-
-  void seenMessages(){
-    Storage.seenMessages(widget.group);
-    List<MessageModel> msgs = widget.group.messages;
-    for(int i = 0; i<msgs.length; i++){
-      msgs[i].seen = true;
-    }
-  }
   void _onMsg(json){
     if(this.mounted){
-      setState(() {}); //update state on message
-      seenMessages();
+      setState(() {});//update state on message
     }
   }
   ScrollController scrollController = new ScrollController();
   @override
   void initState() {
     super.initState();
-    seenMessages();
     Client.socket.on("message", _onMsg);
     bool buffering = false;
     scrollController.addListener(() {

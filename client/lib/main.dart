@@ -24,7 +24,6 @@ class _BlingState extends State<Bling> {
     super.initState();
     Client.initFirebase();
     Client.connect();
-    LocalNotifications.init(context);
     Themes.themes.addListener(() {
       setState(() {});
     });

@@ -20,12 +20,16 @@ class Routes{
   static late ValueNotifier _pageNotifier;
   static late bool _isListenerAdded;
   static late Map<String, GroupModel> _groups;
+  static late RouteSettings settings;
   static void init(){
     pageCtrl = PageController(initialPage: 1);
     page = 1;
     _pageNotifier = ValueNotifier(page);
     _isListenerAdded = false;
     _groups = {};
+  }
+  static GroupModel getGroup(String groupUUID){
+    return _groups[groupUUID]!;
   }
   //Custom event for switching pages on half (change later)
   static void addPageListener(void func()){
@@ -45,6 +49,7 @@ class Routes{
     _isListenerAdded = true;
   }
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    Routes.settings = settings;
     switch(settings.name){
       case '/':
         if(!Storage.isLoaded){

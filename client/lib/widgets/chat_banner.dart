@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class ChatBanner extends StatefulWidget {
   final GroupModel group;
   final Function onPressed;
-  ChatBanner(this.group, this.onPressed) : super(key: ValueKey(group.groupUUID));
+  ChatBanner(this.group, {required this.onPressed}) : super(key: ValueKey(group.groupUUID));
 
   @override
   _ChatBannerState createState() => _ChatBannerState();
