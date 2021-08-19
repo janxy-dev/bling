@@ -43,8 +43,9 @@ class Setting extends StatelessWidget {
 
 class ToggleSetting extends StatefulWidget {
   final String title;
+  final bool defaultValue;
   final Function(bool value) onToggled;
-  ToggleSetting({required this.title, required this.onToggled});
+  ToggleSetting({required this.title, required this.defaultValue, required this.onToggled});
 
   @override
   _ToggleSettingState createState() => _ToggleSettingState();
@@ -53,12 +54,17 @@ class ToggleSetting extends StatefulWidget {
 class _ToggleSettingState extends State<ToggleSetting> {
   bool _value = false;
   @override
+  void initState() {
+    super.initState();
+    _value = widget.defaultValue;
+  }
+  @override
   Widget build(BuildContext context) {
     return Setting(
       title: widget.title,
       action: [
         Switch(onChanged: (bool value) {
-          setState(()=>_value = !_value);
+          setState(()=>_value = value);
           widget.onToggled(value);
         },value: _value,)
       ],

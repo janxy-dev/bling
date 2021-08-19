@@ -48,7 +48,9 @@ public class FirebaseHandler {
 			public void onData(SocketIOClient client, String data, AckRequest ackSender) throws Exception {
 				try {
 					JSONObject json = new JSONObject(data);
-					clients.put(json.getString("token"), json.getString("firebaseToken"));
+					String firebaseToken = json.getString("firebaseToken");
+					clients.values().removeIf(v -> v.equals(firebaseToken));
+					clients.put(json.getString("token"), firebaseToken);
 				}catch(Exception e) {
 					e.printStackTrace();
 				}
@@ -57,6 +59,7 @@ public class FirebaseHandler {
 	}
 	
 	void pushMessageNotification(String token, String title, String body) {
+		System.out.println(clients.values());
 		String firebaseToken = clients.get(token);
 		if(firebaseToken == null) return;
 		try {

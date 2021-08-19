@@ -1,46 +1,82 @@
 import 'dart:convert';
-import 'dart:math';
+import 'dart:io';
 
+import 'package:bling/config/routes.dart';
 import 'package:bling/core/storage.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+import 'models/group.dart';
 import 'models/user.dart';
 import 'packets/login.dart';
 import 'packets/register.dart';
 
 class Client{
    static late IO.Socket socket;
-   static late LocalUserModel user;
+   static LocalUserModel user = LocalUserModel();
    static String token = "";
    static String firebaseToken = "";
+   static bool isConnected = false;
+   static Function onUserFetch = (){};
 
-  static void connect() {
-     socket = IO.io("http://10.0.2.2:5000", <String, dynamic>{
-       "transports": ["websocket"],
-       "autoConnect": false,
-     });
-     socket.connect();
+  static void connect(Function onConnect) {
+     socket = IO.io("http://10.0.2.2:5000", IO.OptionBuilder()
+     .setTransports(['websocket']).build());
      socket.onConnect((data) {
        print("Connected to server!");
+       isConnected = true;
+       onConnect();
+     });
+     socket.onDisconnect((data) => socket.connect());
+     socket.onConnectError((data) {
+       Future.delayed(Duration(milliseconds: 500), (){
+         socket.connect();
+       });
      });
   }
-  static void fetchUser(Function onFetched){
-    Client.fetch("fetchLocalUser", onData: (json){
+  static void fetchUser() {
+     Client.fetch("fetchLocalUser", onData: (json){
       user = LocalUserModel.fromJson(json);
-      onFetched();
       sendFirebaseToken();
+      onUserFetch();
     });
   }
+   static void fetchGroups(Function then){
+     Client.fetch("fetchAllGroups", onData: (json) {
+       if(json != null){
+         //Group isn't sent in a list if there is only 1 group
+         if(json[0] == null){
+           GroupModel model = GroupModel.fromJson(json);
+           Routes.groups.putIfAbsent(model.groupUUID, () => model);
+         }
+         else{
+           for(int i = 0; i<json.length; i++){
+             GroupModel model = GroupModel.fromJson(json[i]);
+             Routes.groups.putIfAbsent(model.groupUUID, () => model);
+           }
+         }
+         //add messages to groups
+         for(int i = 0; i<Routes.groups.keys.length; i++){
+           String groupUUID = Routes.groups.keys.elementAt(i);
+           Storage.getMessagesCount(groupUUID).then((msgCount) {
+             Storage.getMessages(groupUUID, msgCount, 15).then((value) {
+               Routes.groups[groupUUID]!.messages.addAll(value);
+               if(i == Routes.groups.keys.length-1) then();
+             });
+           });
+         }
+       }
+     });
+   }
   static void _auth(response, void onSuccess()?, void onError(List<String> err)?) async{
     if(response["ok"]){
       Client.token = response["token"];
       Storage.prefs.setString("token", Client.token);
-      fetchUser((){
         if(onSuccess != null){
-          onSuccess();
+          fetchGroups((){
+           onSuccess();
+         });
         }
-      });
       return;
     } else{
       if(onError != null){

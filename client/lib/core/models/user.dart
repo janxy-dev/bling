@@ -1,3 +1,5 @@
+import 'package:bling/config/routes.dart';
+
 import '../storage.dart';
 import 'message.dart';
 
@@ -10,10 +12,13 @@ class UserModel{
 class LocalUserModel {
   LocalUserModel();
   String username = "";
+  List<MessageModel> messages = [];
   LocalUserModel.fromJson(Map<String, dynamic> json) : username = json['username']{
     var msgs = json['messages'];
     for(int i = 0; i<msgs.length; i++){
-      Storage.addMessage(MessageModel.fromJson(msgs[i]));
+      MessageModel msg = MessageModel.fromJson(msgs[i]);
+      Routes.groups[msg.groupUUID]!.messages.add(msg);
+      Storage.addMessage(msg);
    }
   }
 }

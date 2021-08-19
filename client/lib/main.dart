@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'config/routes.dart';
 import 'config/themes.dart';
 import 'core/client.dart';
+import 'core/storage.dart';
 import 'local_notifications.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await Storage.load();
+  Client.token = Storage.prefs.getString("token") ?? "";
   runApp(RestartWidget(child: Bling()));
 }
 
@@ -23,7 +26,7 @@ class _BlingState extends State<Bling> {
   void initState(){
     super.initState();
     Client.initFirebase();
-    Client.connect();
+    LocalNotifications.init();
     Themes.themes.addListener(() {
       setState(() {});
     });

@@ -40,7 +40,7 @@ public class ChatHandler {
 					sendMessage(msg);
 					for(int i = 0; i<group.getMembers().length; i++) {
 						db.addMessage(group.getMembers()[i], msg);
-						FirebaseHandler.getInstance().pushMessageNotification(group.getMembers()[i].toString(), group.getName(), msg.getMessage());
+						FirebaseHandler.getInstance().pushMessageNotification(group.getMembers()[i].toString(), group.getName(), msg.getSender() + ": " + msg.getMessage());
 					}
 				}catch(Exception e) {
 					e.printStackTrace();

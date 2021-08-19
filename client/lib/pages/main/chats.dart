@@ -18,35 +18,6 @@ class ChatsPage extends StatefulWidget {
 }
 
 class _ChatsPageState extends State<ChatsPage> {
-  void _fetchGroups(){
-    Client.fetch("fetchAllGroups", onData: (json) {
-      if(this.mounted && json != null){
-        setState(() {
-          //Group isn't sent in a list if there is only 1 group
-          if(json[0] == null){
-            GroupModel model = GroupModel.fromJson(json);
-            widget.groups.putIfAbsent(model.groupUUID, () => model);
-          }
-          else{
-            for(int i = 0; i<json.length; i++){
-              GroupModel model = GroupModel.fromJson(json[i]);
-              widget.groups.putIfAbsent(model.groupUUID, () => model);
-            }
-          }
-          //add messages to groups
-          for(int i = 0; i<widget.groups.keys.length; i++){
-            String groupUUID = widget.groups.keys.elementAt(i);
-            Storage.getMessagesCount(groupUUID).then((msgCount) {
-              Storage.getMessages(groupUUID, msgCount, 15).then((value) {
-                widget.groups[groupUUID]!.messages.addAll(value);
-                setState(() {});
-              });
-            });
-          }
-        });
-      }
-    });
-  }
 
   void seenMessages(GroupModel group){
     Storage.seenMessages(group);
@@ -96,10 +67,6 @@ class _ChatsPageState extends State<ChatsPage> {
   @override
   void initState() {
     super.initState();
-    if(widget.groups.isEmpty){
-      LocalNotifications.init(context);
-      _fetchGroups();
-    }
     Client.socket.on("message", onMessage);
   }
   @override

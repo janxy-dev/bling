@@ -1,14 +1,10 @@
-import 'package:bling/core/models/message.dart';
-import 'package:bling/pages/main/chats.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-import 'config/routes.dart';
 
 class LocalNotifications{
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   static List<Function> listeners = [];
-  static void init(BuildContext context) async{
+  static void init() async{
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('app_icon');
     final IOSInitializationSettings initializationSettingsIOS =

@@ -15,7 +15,7 @@ class SettingsPage extends StatelessWidget {
               Expanded(
                 child: ListView(
                   children: [
-                    ToggleSetting(title: "Dark Theme", onToggled: (bool value){
+                    ToggleSetting(title: "Dark Theme", defaultValue: Themes.isDarkMode, onToggled: (bool value){
                       Themes.themes.toggleTheme();
                     }),
                     Padding(

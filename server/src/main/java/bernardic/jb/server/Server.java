@@ -16,8 +16,8 @@ import main.java.bernardic.jb.server.handlers.GroupHandler;
 public class Server {
 	private static Database database;
 	public static Database getDatabase() { return database; }
-	private static ChatHandler chat;
-	public static ChatHandler getChat() {return chat;}
+	private static ChatHandler chatHandler;
+	public static ChatHandler getChat() {return chatHandler;}
 	public static void main(String[] args) {
 		Configs.init();
 		
@@ -38,7 +38,7 @@ public class Server {
 		FetchHandler fetchHandler = new FetchHandler(server);
 		AuthHandler authHandler = new AuthHandler(server);
 		GroupHandler groupHandler = new GroupHandler(server);
-		ChatHandler chatHandler = new ChatHandler(server);
+		chatHandler = new ChatHandler(server);
 		FirebaseHandler firebaseHandler = new FirebaseHandler(server);
 		
 		authHandler.init();

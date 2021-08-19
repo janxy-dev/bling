@@ -1,23 +1,37 @@
-import 'package:bling/core/storage.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
+import 'package:bling/config/routes.dart';
 import 'package:bling/core/client.dart';
-class LoadingPage extends StatelessWidget {
+import 'package:flutter/material.dart';
+
+class LoadingPage extends StatefulWidget {
+  @override
+  _LoadingPageState createState() => _LoadingPageState();
+}
+class _LoadingPageState extends State<LoadingPage> {
+  @override
+  void initState() {
+    super.initState();
+    Routes.isLoading = true;
+    Client.connect(() {
+      if (Client.token.isNotEmpty) {
+        if (Routes.isLoading) {
+          Client.fetchGroups((){
+            Routes.isLoading = false;
+            Navigator.of(context).pushNamed("/");
+          });
+        }
+        Client.fetchUser();
+      }
+      else{ //->/->AuthPage
+        Routes.isLoading = false;
+        Navigator.of(context).pushNamed("/");
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    if(!Storage.isLoaded){
-      Storage.load().then((value) {
-        Client.token = Storage.prefs.getString("token") ?? "";
-        if(Client.token.isNotEmpty){
-          Client.fetchUser(()=>Navigator.of(context).pushNamed('/'));
-        }
-        else Navigator.of(context).pushNamed('/');
-      });
-    }
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      color: Colors.white,
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent,
     );
   }
 }
+
