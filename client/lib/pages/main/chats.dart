@@ -86,7 +86,7 @@ class _ChatsPageState extends State<ChatsPage> {
   }
   void onNotification(String groupUUID){
     Navigator.of(context).pop();
-    GroupModel group = Routes.getGroup(groupUUID);
+    GroupModel group = Routes.groups[groupUUID]!;
     pushChat(group);
   }
   @override

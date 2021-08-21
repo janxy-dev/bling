@@ -1,4 +1,5 @@
 import 'package:bling/config/routes.dart';
+import 'package:bling/core/models/group.dart';
 
 import '../storage.dart';
 import 'message.dart';
@@ -17,7 +18,11 @@ class LocalUserModel {
     var msgs = json['messages'];
     for(int i = 0; i<msgs.length; i++){
       MessageModel msg = MessageModel.fromJson(msgs[i]);
-      Routes.groups[msg.groupUUID]!.messages.add(msg);
+      GroupModel group = Routes.groups[msg.groupUUID]!;
+      group.messages.add(msg);
+      //change order
+      Routes.groups.remove(msg.groupUUID);
+      Routes.groups.putIfAbsent(group.groupUUID, () => group);
       Storage.addMessage(msg);
    }
   }

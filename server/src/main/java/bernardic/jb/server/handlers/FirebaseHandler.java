@@ -59,7 +59,6 @@ public class FirebaseHandler {
 	}
 	
 	void pushMessageNotification(String token, String title, String body) {
-		System.out.println(clients.values());
 		String firebaseToken = clients.get(token);
 		if(firebaseToken == null) return;
 		try {

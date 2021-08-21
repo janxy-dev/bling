@@ -24,9 +24,6 @@ class Routes{
     _isListenerAdded = false;
     groups = {};
   }
-  static GroupModel getGroup(String groupUUID){
-    return groups[groupUUID]!;
-  }
   //Custom event for switching pages on half (change later)
   static void addPageListener(void func()){
     _pageNotifier.addListener(func);

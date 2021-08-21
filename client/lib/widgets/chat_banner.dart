@@ -29,7 +29,7 @@ class _ChatBannerState extends State<ChatBanner> {
     if(widget.group.messages.isNotEmpty){
       String sender = widget.group.messages.last.sender == Client.user.username || widget.group.messages.last.sender == ""
           ? "" : widget.group.messages.last.sender+": ";
-      message = sender + widget.group.messages.last.message;
+      message = sender + widget.group.messages.last.message + widget.group.messages.last.time.toIso8601String();
     }
     return GestureDetector(
       behavior: HitTestBehavior.opaque,

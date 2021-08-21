@@ -5,10 +5,12 @@ class MessageModel{
   String uuid;
   int id = 0;
   bool seen = false;
-  MessageModel(this.message, this.sender, this.groupUUID, this.uuid, this.id, this.seen);
+  DateTime time;
+  MessageModel(this.message, this.sender, this.groupUUID, this.uuid, this.id, this.seen, this.time);
   MessageModel.fromJson(Map<String, dynamic> json) :
         message = json['message'],
         sender = json['sender'],
         groupUUID = json['groupUUID'],
-        uuid = json['uuid'];
+        uuid = json['uuid'],
+        time = DateTime.now();
 }

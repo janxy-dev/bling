@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:bling/config/routes.dart';
 import 'package:bling/core/storage.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'models/group.dart';
@@ -41,6 +41,25 @@ class Client{
       onUserFetch();
     });
   }
+  //sorting groups by last message timestamp
+   static void _sortGroups(){
+    var groups = Routes.groups.values.toList();
+    if(groups.length < 2) return;
+    for(int i = 0; i<groups.length; i++){
+      for(int n = 0; n<groups.length-1; n++){
+        if(groups[n].messages.isEmpty) continue;
+        if(groups[n+1].messages.isEmpty || groups[n].messages.last.time.millisecondsSinceEpoch > groups[n+1].messages.last.time.millisecondsSinceEpoch){
+          GroupModel temp = groups[n];
+          groups[n] = groups[n+1];
+          groups[n+1] = temp;
+        }
+      }
+    }
+    Routes.groups.clear();
+    for(int i = 0; i<groups.length; i++){
+      Routes.groups.putIfAbsent(groups[i].groupUUID, () => groups[i]);
+    }
+   }
    static void fetchGroups(Function then){
      Client.fetch("fetchAllGroups", onData: (json) {
        if(json != null){
@@ -55,13 +74,16 @@ class Client{
              Routes.groups.putIfAbsent(model.groupUUID, () => model);
            }
          }
-         //add messages to groups
+         //add local messages to groups
          for(int i = 0; i<Routes.groups.keys.length; i++){
            String groupUUID = Routes.groups.keys.elementAt(i);
            Storage.getMessagesCount(groupUUID).then((msgCount) {
              Storage.getMessages(groupUUID, msgCount, 15).then((value) {
                Routes.groups[groupUUID]!.messages.addAll(value);
-               if(i == Routes.groups.keys.length-1) then();
+               if(i == Routes.groups.keys.length-1) {
+                 _sortGroups();
+                 then();
+               }
              });
            });
          }
