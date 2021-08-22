@@ -74,7 +74,7 @@ class Client{
    }
    static void fetchGroups(Function then){
      Client.fetch("fetchAllGroups", onData: (json) {
-       if(json != null){
+       if(json != ""){
          //Group isn't sent in a list if there is only 1 group
          if(json[0] == null){
            GroupModel model = GroupModel.fromJson(json);
@@ -99,7 +99,7 @@ class Client{
              });
            });
          }
-       }
+       } else then();
      });
    }
   static void _auth(response, void onSuccess()?, void onError(List<String> err)?) async{
@@ -128,8 +128,8 @@ class Client{
          onSuccess = (){};
          if(onError != null){
            onError(["Login timeout"]);
-           isLogging = false;
          }
+         isLogging = false;
        }
      });
    }

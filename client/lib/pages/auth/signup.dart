@@ -1,6 +1,7 @@
 import 'package:bling/core/client.dart';
 import 'package:bling/core/packets/register.dart';
 import 'package:bling/widgets/app_bars.dart';
+import 'package:bling/widgets/loading_animation.dart';
 import 'package:flutter/material.dart';
 class SignupPage extends StatefulWidget {
 
@@ -68,7 +69,9 @@ class _SignupPageState extends State<SignupPage> {
                   errors = err;
                 });
               });
-            }, child: Text("Sign up"))
+              setState(() {});
+            }, child: Text("Sign up")),
+            Client.isLogging ? LoadingAnimation() : SizedBox()
           ],
         ),
       ),

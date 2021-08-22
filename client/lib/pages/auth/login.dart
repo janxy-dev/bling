@@ -1,6 +1,7 @@
 import 'package:bling/core/client.dart';
 import 'package:bling/core/packets/login.dart';
 import 'package:bling/widgets/app_bars.dart';
+import 'package:bling/widgets/loading_animation.dart';
 import 'package:flutter/material.dart';
 class LoginPage extends StatefulWidget {
 
@@ -34,7 +35,12 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController username = TextEditingController();
   final TextEditingController password = TextEditingController();
   List<String> errors = [];
-
+  Function update = (){};
+  @override
+  void initState() {
+    super.initState();
+    update = (){ setState(() {});};
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,11 +66,12 @@ class _LoginPageState extends State<LoginPage> {
             TextButton(onPressed: (){
               Client.login(new LoginPacket(username.text, password.text), onSuccess: ()=>Navigator.of(context).pushNamed("/"),
               onError: (err){
-                setState(() {
-                  errors = err;
-                });
+                errors = err;
+                update();
               });
-            }, child: Text("Log In"))
+              setState(() {});
+            }, child: Text("Log In")),
+            Client.isLogging ? LoadingAnimation() : SizedBox()
           ],
         ),
       ),

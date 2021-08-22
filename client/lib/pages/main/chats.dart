@@ -4,6 +4,7 @@ import 'package:bling/core/models/group.dart';
 import 'package:bling/core/models/message.dart';
 import 'package:bling/core/storage.dart';
 import 'package:bling/widgets/chat_banner.dart';
+import 'package:bling/widgets/loading_animation.dart';
 import 'package:flutter/material.dart';
 
 import '../../local_notifications.dart';

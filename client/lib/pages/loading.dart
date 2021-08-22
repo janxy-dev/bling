@@ -1,5 +1,6 @@
 import 'package:bling/config/routes.dart';
 import 'package:bling/core/client.dart';
+import 'package:bling/widgets/loading_animation.dart';
 import 'package:flutter/material.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -32,7 +33,15 @@ class _LoadingPageState extends State<LoadingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlueAccent,
+      body: Stack(
+        children: [
+          Positioned(
+            left: MediaQuery.of(context).size.width/2-15,
+            top: MediaQuery.of(context).size.height/2-15,
+            child: LoadingAnimation()
+          )
+        ],
+      )
     );
   }
 }

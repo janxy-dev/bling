@@ -28,9 +28,11 @@ public class FetchHandler {
 		server.addEventListener("fetchLocalUser", String.class, (client, data, ackSender) -> {
 			try {
 				User user = Server.getDatabase().getUser(UUID.fromString(data));
+				if(user == null) return;
 				ackSender.sendAckData(new LocalUserView(user));
 				//add user to rooms
 				UUID[] groups = user.getGroups();
+				if(groups == null) return;
 				for(UUID group : groups) {
 					client.joinRoom(group.toString());
 				}
@@ -48,6 +50,7 @@ public class FetchHandler {
 				User user = Server.getDatabase().getUser(UUID.fromString(token));
 				if(user == null) return;
 				UUID[] group_ids = user.getGroups();
+				if(user.getGroups() == null) ackSender.sendAckData("");
 				GroupView[] groups = new GroupView[group_ids.length];
 				for(int i = 0; i<group_ids.length; i++) {
 					groups[i] = new GroupView(Server.getDatabase().getGroup(group_ids[i]));
