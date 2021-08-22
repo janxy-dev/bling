@@ -29,6 +29,11 @@ public class FetchHandler {
 			try {
 				User user = Server.getDatabase().getUser(UUID.fromString(data));
 				ackSender.sendAckData(new LocalUserView(user));
+				//add user to rooms
+				UUID[] groups = user.getGroups();
+				for(UUID group : groups) {
+					client.joinRoom(group.toString());
+				}
 				//delete msgs from server after fetch
 				Server.getDatabase().deleteMessages(user);
 			}catch(Exception e) {
@@ -46,7 +51,6 @@ public class FetchHandler {
 				GroupView[] groups = new GroupView[group_ids.length];
 				for(int i = 0; i<group_ids.length; i++) {
 					groups[i] = new GroupView(Server.getDatabase().getGroup(group_ids[i]));
-					client.joinRoom(group_ids[i].toString());
 				}
 				ackSender.sendAckData((Object[])groups);
 			}

@@ -1,6 +1,7 @@
 import 'package:bling/widgets/restart.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_file.dart';
 import 'config/routes.dart';
 import 'config/themes.dart';
 import 'core/client.dart';
@@ -22,15 +23,23 @@ class Bling extends StatefulWidget {
 
 class _BlingState extends State<Bling> {
 
+  void updateState(){
+    setState(() {});
+  }
+
   @override
   void initState(){
     super.initState();
     Client.initFirebase();
     LocalNotifications.init();
-    Themes.themes.addListener(() {
-      setState(() {});
-    });
+    Themes.themes.addListener(updateState);
     Routes.init();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Themes.themes.removeListener(updateState);
   }
 
   @override

@@ -9,7 +9,6 @@ class Themes extends ChangeNotifier{
   static ThemeMode get themeMode => isDarkMode ? ThemeMode.dark : ThemeMode.light;
   void toggleTheme() async{
     Storage.prefs.setBool("darkMode", !isDarkMode);
-    print(isDarkMode);
     notifyListeners();
   }
 

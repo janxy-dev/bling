@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:bling/core/client.dart';
 import 'package:bling/core/models/group.dart';
 import 'package:bling/core/models/message.dart';
@@ -52,36 +54,44 @@ class _ChatState extends State<Chat> {
     Widget avatar = CircleAvatar(backgroundImage: NetworkImage("https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"), radius: 20.0);
     if(message.sender.isEmpty) avatar = SizedBox();
     return Container(
-      padding: EdgeInsets.only(top: 10.0),
+      padding: EdgeInsets.only(top: 5.0, right: 10.0, left: 10.0),
       child: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.only(left: 10.0, right: 10.0),
-            child: Row(
-              mainAxisAlignment: isClients ? MainAxisAlignment.end : MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                isClients ? SizedBox() : avatar,
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      !isClients && message.sender.isNotEmpty ? Text(message.sender, style: TextStyle(fontWeight: FontWeight.bold)) : SizedBox(),
-                      Text(message.message, style: TextStyle(color: isClients ? Colors.white : Colors.black))
-                    ],
+          Row(
+            mainAxisAlignment: isClients ? MainAxisAlignment.end : MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              isClients ? SizedBox() : avatar,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        !isClients && message.sender.isNotEmpty ? Text(message.sender, style: TextStyle(fontWeight: FontWeight.bold)) : SizedBox(),
+                        Text(message.message, style: TextStyle(color: isClients ? Colors.white : Colors.black)),
+                      ],
+                    ),
+                    constraints: BoxConstraints(
+                      minWidth: 40,
+                      maxWidth: MediaQuery.of(context).size.width/2+20,
+                    ),
+                    margin: EdgeInsets.only(left: 7.0, right: 7.0, top: 5.0),
+                    padding: EdgeInsets.all(6.0),
+                    decoration: BoxDecoration(color: isClients ? Colors.blue : Colors.white, borderRadius: BorderRadius.circular(10.0)),
                   ),
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width/2+20,
-                  ),
-                  margin: EdgeInsets.only(left: 7.0, right: 7.0, top: 5.0),
-                  padding: EdgeInsets.all(6.0),
-                  decoration: BoxDecoration(color: isClients ? Colors.blue : Colors.white, borderRadius: BorderRadius.circular(10.0)),
-
-                ),
-                isClients ? avatar : SizedBox()
-              ],
-            ),
-          )
+                  Container(
+                    padding: EdgeInsets.only(top: 5, right: 7),
+                    child: Text(
+                      message.getFormattedTime(), style: TextStyle(fontSize: 9),),
+                  )
+                ],
+              ),
+              isClients ? avatar : SizedBox()
+            ],
+          ),
         ],
       ),
     );
@@ -115,6 +125,7 @@ class _ChatState extends State<Chat> {
   }
   @override
   Widget build(BuildContext context) {
+    DateTime? date = null;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: _chatAppBar(widget.group.name),
@@ -127,7 +138,22 @@ class _ChatState extends State<Chat> {
               reverse: true,
               padding: EdgeInsets.only(bottom: 10.0),
               controller: scrollController,
-              children: widget.group.messages.map((e) => messageBuilder(e)).toList().reversed.toList(),
+              children: widget.group.messages.map((e) {
+                if(date == null || !(e.time.day == date!.day && e.time.month == date!.month && e.time.year == date!.year)){
+                  date = e.time;
+                  String formattedDate = e.getFormattedDate();
+                  if(formattedDate.length == 5) formattedDate = "Today";
+                  return Column(
+                    children: [
+                      Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Text(formattedDate, style: TextStyle(fontSize: 12),)),
+                      messageBuilder(e)
+                    ],
+                  );
+                }
+                return messageBuilder(e);
+              }).toList().reversed.toList(),
             ),
           ),
           //Input field

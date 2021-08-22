@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'models/group.dart';
+import 'models/message.dart';
 import 'models/user.dart';
 import 'packets/login.dart';
 import 'packets/register.dart';
@@ -18,33 +19,44 @@ class Client{
    static String firebaseToken = "";
    static bool isConnected = false;
    static Function onUserFetch = (){};
+   static bool isLogging = false;
 
   static void connect(Function onConnect) {
-     socket = IO.io("http://10.0.2.2:5000", IO.OptionBuilder()
-     .setTransports(['websocket']).build());
+     socket = IO.io("http://10.0.2.2:5000", {
+       "transports": ["websocket"],
+       "reconnection": true,
+       "reconnectionDelay": 200,
+       "reconnectionAttempts": double.infinity
+     });
      socket.onConnect((data) {
        print("Connected to server!");
        isConnected = true;
        onConnect();
      });
-     socket.onDisconnect((data) => socket.connect());
-     socket.onConnectError((data) {
-       Future.delayed(Duration(milliseconds: 500), (){
-         socket.connect();
-       });
-     });
   }
   static void fetchUser() {
      Client.fetch("fetchLocalUser", onData: (json){
       user = LocalUserModel.fromJson(json);
+      //add undelivered messages
+      var msgs = json['messages'];
+      for(int i = 0; i<msgs.length; i++){
+        MessageModel msg = MessageModel.fromJson(msgs[i]);
+        GroupModel group = Routes.groups[msg.groupUUID]!;
+        if(group.messages.indexWhere((e) => e.uuid == msg.uuid) != -1) return;
+        group.messages.add(msg);
+        //change order
+        Routes.groups.remove(msg.groupUUID);
+        Routes.groups.putIfAbsent(group.groupUUID, () => group);
+        Storage.addMessage(msg);
+      }
       sendFirebaseToken();
       onUserFetch();
     });
   }
   //sorting groups by last message timestamp
    static void _sortGroups(){
+    if(Routes.groups.length < 2) return;
     var groups = Routes.groups.values.toList();
-    if(groups.length < 2) return;
     for(int i = 0; i<groups.length; i++){
       for(int n = 0; n<groups.length-1; n++){
         if(groups[n].messages.isEmpty) continue;
@@ -97,21 +109,38 @@ class Client{
         if(onSuccess != null){
           fetchGroups((){
            onSuccess();
+           isLogging = false;
          });
         }
       return;
     } else{
       if(onError != null){
         onError(response["errors"].cast<String>());
+        isLogging = false;
       }
     }
   }
+   static void loginTimeout(void onSuccess()?, void onError(List<String> err)?){
+     if(isLogging) return;
+     isLogging = true;
+     Future.delayed(Duration(seconds: 15), (){
+       if(isLogging){
+         onSuccess = (){};
+         if(onError != null){
+           onError(["Login timeout"]);
+           isLogging = false;
+         }
+       }
+     });
+   }
    static void login(LoginPacket login, {void onSuccess()?, void onError(List<String> err)?}){
+     loginTimeout(onSuccess, onError);
      socket.emitWithAck("login", login.toJson(), ack: (json){
        _auth(json, onSuccess, onError);
      });
    }
    static void register(RegisterPacket register, {void onSuccess()?, void onError(List<String> err)?}){
+    loginTimeout(onSuccess, onError);
     socket.emitWithAck("register", register.toJson(), ack:(json){
       _auth(json, onSuccess, onError);
     });

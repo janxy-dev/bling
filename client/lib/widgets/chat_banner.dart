@@ -1,8 +1,7 @@
 import 'package:bling/core/client.dart';
 import 'package:bling/core/models/group.dart';
-import 'package:bling/pages/chat.dart';
-import 'package:bling/pages/main/chats.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ChatBanner extends StatefulWidget {
   final GroupModel group;
@@ -14,22 +13,29 @@ class ChatBanner extends StatefulWidget {
 }
 
 class _ChatBannerState extends State<ChatBanner> {
-  Widget get newMessageSign => Container(
-    margin: EdgeInsets.only(right: 10.0),
-    width: 10,
-    height: 10,
-    decoration: BoxDecoration(
-      color: Colors.greenAccent,
-      shape: BoxShape.circle
-    ),
-  );
+  Widget? newMessageSign() {
+    if(widget.group.messages.isNotEmpty && !widget.group.messages.last.seen){
+      return Container(
+        margin: EdgeInsets.only(right: 10.0),
+        width: 10,
+        height: 10,
+        decoration: BoxDecoration(
+            color: Colors.greenAccent,
+            shape: BoxShape.circle
+        ),
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
     String message = "";
     if(widget.group.messages.isNotEmpty){
       String sender = widget.group.messages.last.sender == Client.user.username || widget.group.messages.last.sender == ""
           ? "" : widget.group.messages.last.sender+": ";
-      message = sender + widget.group.messages.last.message + widget.group.messages.last.time.toIso8601String();
+      message = sender + widget.group.messages.last.message;
+      if(message.length > 30){
+        message = message.replaceRange(30, message.length, "...");
+      }
     }
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -55,13 +61,22 @@ class _ChatBannerState extends State<ChatBanner> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(widget.group.name, style: TextStyle(fontSize: 14)),
-                      Text(message, style: TextStyle(fontSize: 12))
+                      Row(children: [
+                        Text(message, style: TextStyle(fontSize: 12)),
+                        Padding(
+                          padding: EdgeInsets.only(right: 10.0),
+                          child: Text(widget.group.messages.isNotEmpty ? widget.group.messages.last.getFormattedDate() : "", style: TextStyle(
+                            fontSize: 10
+                          ),),
+                        ),
+                      ], mainAxisAlignment: MainAxisAlignment.spaceBetween,)
+
                     ],
                   ),
                 )
               ),
             ),
-            widget.group.messages.isNotEmpty && widget.group.messages.last.seen == false ? newMessageSign : SizedBox()
+            newMessageSign() ?? SizedBox()
           ],
         ),
       ),

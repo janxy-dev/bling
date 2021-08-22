@@ -22,8 +22,10 @@ class _LoadingPageState extends State<LoadingPage> {
         Client.fetchUser();
       }
       else{ //->/->AuthPage
-        Routes.isLoading = false;
-        Navigator.of(context).pushNamed("/");
+        if(Routes.isLoading){
+          Routes.isLoading = false;
+          Navigator.of(context).pushNamed("/");
+        }
       }
     });
   }
