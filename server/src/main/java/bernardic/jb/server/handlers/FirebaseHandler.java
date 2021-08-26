@@ -61,12 +61,14 @@ public class FirebaseHandler {
 	void pushMessageNotification(String token, String title, String body) {
 		String firebaseToken = clients.get(token);
 		if(firebaseToken == null) return;
-		try {
-			FirebaseMessaging.getInstance().send(Message.builder().setToken(firebaseToken).setNotification(Notification.builder()
-					.setTitle(title)
-					.setBody(body).build()).build());
-		} catch (FirebaseMessagingException e) {
-			e.printStackTrace();
-		}
+		new Thread(()-> {
+			try {
+				FirebaseMessaging.getInstance().send(Message.builder().setToken(firebaseToken).setNotification(Notification.builder()
+						.setTitle(title)
+						.setBody(body).build()).build());
+			} catch (FirebaseMessagingException e) {
+				e.printStackTrace();
+			}
+		}).start();
 	}
 }

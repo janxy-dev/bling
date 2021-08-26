@@ -26,7 +26,7 @@ class MessageModel{
     else if(time.day == yesterday.day && time.month == yesterday.month && time.year == yesterday.year){
       return "Yesterday";
     }
-    else if(time.isAfter(weekAgo) && time.day != weekAgo.day && time.month != weekAgo.month && time.year != weekAgo.year){
+    else if(time.isAfter(weekAgo) && !(time.day == weekAgo.day && time.month == weekAgo.month && time.year == weekAgo.year)){
       return DateFormat.EEEE(Intl.defaultLocale).format(time);
     }
     else return DateFormat.yMd(Intl.defaultLocale).format(time);

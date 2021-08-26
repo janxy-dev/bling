@@ -96,16 +96,26 @@ class _ChatState extends State<Chat> {
       ),
     );
   }
-  void _onMsg(json){
+  void onMsg(json){
     if(this.mounted){
       setState(() {});//update state on message
     }
+  }
+  void onUserFetch(msgs){
+    setState(() {});
+      for(int i = 0; i<msgs.length; i++){
+        MessageModel msg = MessageModel.fromJson(msgs[i]);
+        if(msg.groupUUID == widget.group.groupUUID){
+          widget.group.messages.firstWhere((e) => e.uuid == msg.uuid).seen = true;
+        }
+      }
   }
   ScrollController scrollController = new ScrollController();
   @override
   void initState() {
     super.initState();
-    Client.socket.on("message", _onMsg);
+    Client.onUserFetch.add(onUserFetch);
+    Client.socket.on("message", onMsg);
     bool buffering = false;
     scrollController.addListener(() {
         if(scrollController.position.extentAfter < 500 && !buffering){
@@ -121,11 +131,12 @@ class _ChatState extends State<Chat> {
   @override
   void dispose() {
     super.dispose();
-    Client.socket.off("message", _onMsg);
+    Client.socket.off("message", onMsg);
+    Client.onUserFetch.remove(onUserFetch);
   }
   @override
   Widget build(BuildContext context) {
-    DateTime? date = null;
+    DateTime? date;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: _chatAppBar(widget.group.name),

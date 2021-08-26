@@ -19,6 +19,7 @@ class _LoadingPageState extends State<LoadingPage> {
             Routes.isLoading = false;
             Navigator.of(context).pushNamed("/");
           });
+          return;
         }
         Client.fetchUser();
       }

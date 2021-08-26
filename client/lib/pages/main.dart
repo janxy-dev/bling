@@ -20,7 +20,8 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    Client.onUserFetch = (){setState(() {});};
+    Client.onUserFetch.clear();
+    Client.onUserFetch.add((data){setState(() {});});
     Client.fetchUser();
   }
   @override

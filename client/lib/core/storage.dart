@@ -17,7 +17,7 @@ class Storage{
     List<Map> query = await database.rawQuery("SELECT * FROM messages WHERE group_uuid = '$groupUUID' AND id <= $fromMessageID AND id > ${fromMessageID-count}");
     return Future.value(query.map((e) => MessageModel(e["message"], e["sender"], e["group_uuid"], e["uuid"], e["id"], e["seen"] == 0 ? false : true, DateTime.fromMillisecondsSinceEpoch(e["time"]))).toList());
   }
-  static void addMessage(MessageModel msg) async{
+  static Future<void> addMessage(MessageModel msg) async{
     int messages = await getMessagesCount(msg.groupUUID);
     await database.insert("messages", {"message": msg.message, "sender": msg.sender, "group_uuid": msg.groupUUID, "uuid": msg.uuid, "id": messages+1, "seen": msg.seen ? 1 : 0, "time": msg.time.millisecondsSinceEpoch}, conflictAlgorithm: ConflictAlgorithm.ignore);
   }

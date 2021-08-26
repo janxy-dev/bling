@@ -37,11 +37,11 @@ public class ChatHandler {
 					Group group = db.getGroup(UUID.fromString(packet.getGroupUUID()));
 					if(group == null) return;
 					ChatMessageView msg = new ChatMessageView(group.getGroupUUID(), UUID.randomUUID(), packet.getMessage(), user.getUsername());
-					sendMessage(msg);
 					for(int i = 0; i<group.getMembers().length; i++) {
 						db.addMessage(group.getMembers()[i], msg);
 						FirebaseHandler.getInstance().pushMessageNotification(group.getMembers()[i].toString(), group.getName(), "Message");
 					}
+					sendMessage(msg);
 				}catch(Exception e) {
 					e.printStackTrace();
 				}

@@ -18,7 +18,7 @@ class Client{
    static String token = "";
    static String firebaseToken = "";
    static bool isConnected = false;
-   static Function onUserFetch = (){};
+   static List<Function(dynamic)> onUserFetch = [];
    static bool isLogging = false;
 
   static void connect(Function onConnect) {
@@ -35,7 +35,7 @@ class Client{
      });
   }
   static void fetchUser() {
-     Client.fetch("fetchLocalUser", onData: (json){
+     Client.fetch("fetchLocalUser", onData: (json) async{
       user = LocalUserModel.fromJson(json);
       //add undelivered messages
       var msgs = json['messages'];
@@ -47,10 +47,12 @@ class Client{
         //change order
         Routes.groups.remove(msg.groupUUID);
         Routes.groups.putIfAbsent(group.groupUUID, () => group);
-        Storage.addMessage(msg);
+        await Storage.addMessage(msg);
       }
       sendFirebaseToken();
-      onUserFetch();
+      for(int i = 0; i<onUserFetch.length; i++){
+        onUserFetch[i](msgs);
+      }
     });
   }
   //sorting groups by last message timestamp

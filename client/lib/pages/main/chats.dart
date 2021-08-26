@@ -28,7 +28,7 @@ class _ChatsPageState extends State<ChatsPage> {
     }
   }
 
-  void onMessage(data){
+  void onMessage(data) async{
     var json = data[0];
     if(json == null) json = data;
     else data[1](Client.token); //send ack that message is delivered
@@ -36,11 +36,11 @@ class _ChatsPageState extends State<ChatsPage> {
     // fetch group if doesn't exist
     if(widget.groups[message.groupUUID] == null){
       Client.fetch("fetchGroup", args: [json["groupUUID"]], onData: (data){
-        setState(() {
+        setState(() async{
           GroupModel group = GroupModel.fromJson(data);
           group.messages.add(message);
           widget.groups.putIfAbsent(data["groupUUID"], () => group);
-          Storage.addMessage(message);
+          await Storage.addMessage(message);
         });
       });
       return;
@@ -62,7 +62,7 @@ class _ChatsPageState extends State<ChatsPage> {
       widget.groups.remove(group.groupUUID);
       widget.groups.putIfAbsent(group.groupUUID, () => group);
     });
-    Storage.addMessage(message);
+    await Storage.addMessage(message);
   }
   GroupModel? currentGroup;
   @override
